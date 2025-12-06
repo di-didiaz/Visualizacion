@@ -12,13 +12,7 @@ import altair as alt
 from streamlit_option_menu import option_menu
 import joblib
 import numpy as np
-import streamlit as st
-import pandas as pd
-import numpy as np
-import altair as alt
-!pip install streamlit-option-menu
-from streamlit_option_menu import option_menu
-import joblib
+
 
 # Crear pagina
 st.set_page_config(page_title="Conoce y predice la Salud de España", page_icon="⚕🇪🇸", layout="wide")
