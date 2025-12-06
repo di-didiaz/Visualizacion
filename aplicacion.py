@@ -64,9 +64,9 @@ if selected == "Me siento saludable?":
     st.subheader("Aquí podrás predecir tu salud basado en los datos de la población en España")
 
     df = load_data()
-    catboost= joblib.load("datos/catboost.joblib")
-    xgboost= joblib.load("datos/xgboost.joblib")
-    preprocesador= joblib.load("datos/preprocesador.joblib")
+    catboost= joblib.load("catboost.joblib")
+    xgboost= joblib.load("xgboost.joblib")
+    preprocesador= joblib.load("preprocesador.joblib")
 
 # Entradas de los usuarions
     st.markdown("Introduce los datos abajo para obtener la predicción.")
