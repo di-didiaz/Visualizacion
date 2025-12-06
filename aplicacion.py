@@ -18,13 +18,13 @@ st.set_page_config(
     layout="wide"
 )
 
-# Subir datos
+# Subir datos- metodo tomado de app de prueba de Streamlit
 @st.cache_data
 def load_data():
     df = pd.read_csv("datos/df_final.csv", encoding= "latin-1")
     return df
 
-
+ #Se uso como referencia  https://www.youtube.com/watch?v=7E3yxq-P-a8
 with st.sidebar:
     selected = option_menu(
         menu_title="Menú",
