@@ -10,13 +10,18 @@ import streamlit as st
 import pandas as pd
 import altair as alt
 from streamlit_option_menu import option_menu
+import joblib
+import numpy as np
+import streamlit as st
+import pandas as pd
+import numpy as np
+import altair as alt
+!pip install streamlit-option-menu
+from streamlit_option_menu import option_menu
+import joblib
 
 # Crear pagina
-st.set_page_config(
-    page_title="Visualización de datos de Salud de España",
-    page_icon="⚕",
-    layout="wide"
-)
+st.set_page_config(page_title="Conoce y predice la Salud de España", page_icon="⚕🇪🇸", layout="wide")
 
 # Subir datos- metodo tomado de app de prueba de Streamlit
 @st.cache_data
@@ -28,21 +33,21 @@ def load_data():
 with st.sidebar:
     selected = option_menu(
         menu_title="Menú",
-        options=["Inicio", "Ver resultados de la encuesta", "Predecir mi percepción de salud"],
+        options=["Inicio", "Ver resultados de la encuesta", "Me siento saludable?"],
         icons=["house-heart-fill", "clipboard-pulse", "stars"],
         menu_icon="body-text",
-        default_index=0
-    )
-
+        default_index=1)
+###########################################################################################################
 # Pagina de inicio
 if selected == "Inicio":
     st.title("Análisis y Predicción de datos de Salud")
-    st.subheader("Hola! 🤓")
-    st.write("Gracias por tu interés por la salud en España.")
-    st.write("""Esta página te permite visualizar resultados de la 
+    st.subheader("Hola!")
+    st.write("""Esta página te permite visualizar resultados de la
              [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
     st.write("Usa el menu lateral para navegar entre: Visualización de datos y predicción de tu salud **percibida**.")
     st.subheader("Datos iniciales de la encuesta")
+
+###########################################################################################################
 
 # Para ver los resultados
 
@@ -52,25 +57,59 @@ if selected == "Ver resultados de la encuesta":
     st.subheader("🗺️ Haz clic en una comunidad autónoma")
 
 # Cargar datos
-    
+
     df = load_data()
     st.dataframe(df.head()) #https://www.youtube.com/watch?v=7E3yxq-P-a8
 
+###########################################################################################################
+
 # Sección Predecir percepción de salud
 
-if selected == "Predecir mi percepción de salud":
+if selected == "Me siento saludable?":
     st.title("Predecir mi percepción de salud")
     st.subheader("Aquí podrás predecir tu salud basado en los datos de la población en España")
-    
+
+    df = load_data()
+    catboost= joblib.load("catboost.joblib")
+    xgboost= joblib.load("xgboost.joblib")
+    preprocesador= joblib.load("preprocesador.joblib")
+
 # Entradas de los usuarions
-    
-    edad = st.slider("Selecciona tu edad", 0, 100, 25)
-    st.write("Tu edad es:", edad)
-    
-    actividad = st.selectbox(
-        "¿Cuál es tu nivel de actividad física?",
-        ["Bajo", "Ocasional", "Regular", "Sedentario"]
-    )
-    
-    if st.button("¡Predecir ahora!"):
+    st.markdown("Introduce los datos abajo para obtener la predicción.")
+    edad= st.slider("Selecciona tu edad", 0, 100, 25)
+    st.write("👶 Tu edad es:", edad)
+
+    actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Bajo", "Ocasional", "Regular", "Sedentario"])
+    # Esto hay que cambiarlo despues a ["1 o 2 veces", "3 veces", "4 o mas veces", "Nunca"] para volverlo a hacer ["Bajo", "Ocasional", "Regular", "Sedentario"])
+
+    sedentarismo=st.number_input("🦥 Cuántas horas pasas sentado al dia en un dia normal?",min_value=0, max_value=24, value=6)
+
+    # Esto hay que cambiarlo despues a % del de dia
+
+    carne_frec= st.selectbox("🥩 Cuántas piezas de carne comes como máximo a la semana?. Si comes más de 10, elije 10",[0,3,5,7,10], index=2)
+
+    imc_cat= st.selectbox("Cuál es tu IMC?",["Bajo", "Normal", "Sobrepeso", "Obesidad"])
+
+    # Esto hay que cambiarlo a peso y altura para calcularlo e incluilo dentro del rango
+
+    if st.button("Predecir ahora!"):
+        df_entrada= pd.DataFrame([{"Edad": edad, "Actividad_física_cat": actividad,"Sedentarismo%_horas": sedentarismo, "IMC_cat": imc_cat, "Carne_frec": carne_frec}])
+
+        X_pp= preprocesador.transform(df_entrada)
+        cat_pred= catboost.predict(df_entrada)[0]
+        cat_prob= catboost.predict_proba(df_entrada)[0].max()
+        xgb_pred= xgboost.predict(X_pp)[0]
+        xgb_prob= xgboost.predict_proba(X_pp)[0].max()
+
+        noms= {0: "Malo",1: "Regular",2: "Bueno"}
+        cat_noms= noms.get(int(cat_pred), str(cat_pred))
+        xgb_noms= noms.get(int(xgb_pred), str(xgb_pred))
+
+        st.subheader("Resultados del modelo")
+
+        st.write("CatBoost → "+cat_noms+"  (confianza: "+ str(round(cat_prob, 2))+")")
+        xgb_text = "XGBoost → "+ xgb_noms
+        xgb_text = xgb_text+ "  (confianza: "+ str(round(xgb_prob, 2)) + ")"
+        st.write(xgb_text)
+
         st.success("Predicción generada")
