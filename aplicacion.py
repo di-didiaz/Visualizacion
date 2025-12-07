@@ -62,8 +62,9 @@ if selected == "Me siento saludable?":
 # Entradas de los usuarions
     st.markdown("Introduce los datos abajo para obtener la predicción.")
     edad= st.slider("👶 Selecciona tu edad", 0, 100, 35)
-    comunidad= st.selectbox("Comunidad Autónoma", ["Andalucia","Aragon","Asturias","Islas Baleares","Canarias","Cantabria", "Castilla-La Mancha","Castilla y León","Cataluña",
-                                                   "Extremadura","Galicia","Madrid","Murcia","Navarra","La Rioja","Pais Vasco","Comunidad Valenciana","Ceuta","Melilla"])
+    comunidad= st.selectbox("Comunidad Autónoma", ["País Vasco", "Castilla - La Mancha", "Comunitat Valenciana",
+       "Andalucía", "Castilla y León", "Extremadura", "Balears, Illes","Cataluña", "Galicia", "Aragón", "Rioja, La","Madrid, Comunidad de", "Murcia, Región de",
+       "Navarra, Comunidad Foral de", "Asturias, Principado de","Canarias", "Cantabria", "Ceuta", "Melilla"])
     estudios= st.selectbox("👩‍🏫 Que estudios tienes?",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
     actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Activo", "Ocasional", "Regular", "Sedentario"])
