@@ -33,6 +33,8 @@ if selected == "Resultados de la encuesta":
     with tab1:
 
         st.subheader("🗺️ Haz clic en una comunidad autónoma")
+
+        # ver https://discuss.streamlit.io/t/interactive-maps/82782
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
 
         # Proporcion por comunidad
