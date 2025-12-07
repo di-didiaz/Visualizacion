@@ -81,7 +81,7 @@ if selected == "Me siento saludable?":
         cat_cols= ["Comunidad Autonoma", "Estudios", "Actividad_física_cat", "Carne_frec"]
 
         for c in cat_cols:
-        df_entrada[c] = df_entrada[c].astype(str)
+            df_entrada[c] = df_entrada[c].astype(str)
 
         cat_pred= catboost.predict(df_entrada.copy())[0]
         cat_prob= catboost.predict_proba(df_entrada.copy())[0].max()
