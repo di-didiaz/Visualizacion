@@ -37,7 +37,7 @@ if selected == "Resultados de la encuesta":
 
         # Proporcion por comunidad
         total_comunidad = df_prop.groupby("Comunidad Autonoma")["count"].transform("sum")
-        df_prop["prop"] = df_prop["count"] / total_por_comunidad
+        df_prop["prop"] = df_prop["count"]/total_comunidad
 
         mapa= alt.Chart(df_prop).mark_bar().encode(x=alt.X("prop:Q", title="Proporción"),y=alt.Y("Comunidad Autonoma:N", sort='-x'), color=alt.Color("Salud_Percibida:N", title="Salud percibida"),
                                                           tooltip=["Comunidad Autonoma", "Salud_Percibida", alt.Tooltip("prop:Q", format=".2f")]).properties(width=800, height=600).interactive()
