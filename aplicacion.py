@@ -76,13 +76,7 @@ if selected == "Me siento saludable?":
     if st.button("Predecir ahora!"):
         df_entrada= pd.DataFrame([{"Edad": edad, "Comunidad Autonoma": comunidad, "Actividad_física_cat": actividad,"Sedentarismo%_horas": sedentarismo, "Estudios": estudios, "Carne_frec": carne_frec}])
 
-        # Error por entrenamiento como string, se pasan las entradas a string
-
-        cat_cols= ["Comunidad Autonoma", "Estudios", "Actividad_física_cat", "Carne_frec"]
-
-        for c in cat_cols:
-            df_entrada[c] = df_entrada[c].astype(str)
-
+        
         cat_pred= catboost.predict(df_entrada)[0]
         cat_prob= catboost.predict_proba(df_entrada)[0].max()
         X_pp= preprocesador.transform(df_entrada)
