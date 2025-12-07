@@ -17,31 +17,37 @@ def load_data():
 
  #Se uso como referencia  https://www.youtube.com/watch?v=7E3yxq-P-a8
 with st.sidebar:
-    selected = option_menu(
-        menu_title="Menú",
-        options=["Inicio", "Ver resultados de la encuesta", "Me siento saludable?"],
-        icons=["house-heart-fill", "clipboard-pulse", "stars"],
-        menu_icon="body-text",
-        default_index=1)
+    selected = option_menu(menu_title="Menú", options=["Resultados de la encuesta", "Predicción personalizada"], icons=["clipboard-pulse", "stars"], 
+                           menu_icon="body-text",default_index=1)
 ###########################################################################################################
 # Pagina de inicio
-if selected == "Inicio":
+if selected == "Resultados de la encuesta":
     st.title("Análisis y Predicción de datos de Salud")
-    st.subheader("Hola!")
-    st.write("""Esta página te permite visualizar resultados de la
+    st.write("""Esta sección te permite visualizar resultados de la
              [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
-    st.write("Usa el menu lateral para navegar entre: Visualización de datos y predicción de tu salud **percibida**.")
-    st.subheader("Datos iniciales de la encuesta")
+    st.subheader("Datos por comunidad")
+    
+    tab1, tab2 = st.tabs(["Salud", "Sedentarismo"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
+    with tab1:
 
-###########################################################################################################
+        st.subheader("🗺️ Haz clic en una comunidad autónoma")
+    
+        mapa_salud= df.groupby("Comunidad Autonoma")[Salud_Percibida".mean().reset_index()
+        mapa_salud.columns=["Comunidad Automoma" "Media percepcion de salud"]
+    
+        mapa= alt.Chart(mapa_salud).mark_geoshape(stroke="white").encode(color=alt.Color("Media percepcion de salud", title= "Salud percibida media")).properties(width=800, height=500).interactive()
+        st.altair_chart(mapa, theme=None)
+        
+    with tab2:
 
-# Para ver los resultados
 
-if selected == "Ver resultados de la encuesta":
-    st.title("Ver resultados de la encuesta")
-    st.write("Aqui encontrarás los resultados de la encuesta de salud de España 2023")
-    st.subheader("🗺️ Haz clic en una comunidad autónoma")
+        st.subheader("Horas del dia sentado en los encuestados")
+    
+        sedentarismo= alt.Chart(df)mark_bar().encode(alt.X("Sedentarismo horas",bin= True, title= "Horas sentado"), alt.Y("count()").properties(width=600, height=400)
 
+        st.altair_chart(sedentarismo,user_container_width=True)                                                            
+
+                                                                    
 # Cargar datos
 
     df = load_data()
