@@ -84,8 +84,8 @@ if selected == "Me siento saludable?":
 
         noms= {0: "Malo",1: "Regular",2: "Bueno"}
         cat_prediccion= noms[int(cat_pred)]
-        mod_prediccion= noms[(int(ord_pred)]
-
+        mod_prediccion= noms[int(ord_pred)]
+        
         st.subheader("Resultados del modelo")
 
         st.write("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
