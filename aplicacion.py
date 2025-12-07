@@ -33,11 +33,14 @@ if selected == "Resultados de la encuesta":
     with tab1:
 
         st.subheader("🗺️ Haz clic en una comunidad autónoma")
-    
-        mapa_salud= df.groupby("Comunidad Autonoma")["Salud_Percibida"].count().reset_index()
-        mapa_salud.columns=["Comunidad Automoma" "Media percepcion de salud"]
-    
-        mapa= alt.Chart(mapa_salud).mark_geoshape(stroke="white").encode(color=alt.Color("Media percepcion de salud", title= "Salud percibida media")).properties(width=800, height=500).interactive()
+        df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
+
+        # Proporcion por comunidad
+        total_comunidad = df_prop.groupby("Comunidad Autonoma")["count"].transform("sum")
+        df_prop["prop"] = df_prop["count"] / total_por_comunidad
+
+        mapa= alt.Chart(df_prop).mark_bar().encode(x=alt.X("prop:Q", title="Proporción"),y=alt.Y("Comunidad Autonoma:N", sort='-x'), color=alt.Color("Salud_Percibida:N", title="Salud percibida"),
+                                                          tooltip=["Comunidad Autonoma", "Salud_Percibida", alt.Tooltip("prop:Q", format=".2f")]).properties(width=800, height=600).interactive()
         st.altair_chart(mapa)
         
     with tab2:
@@ -45,15 +48,12 @@ if selected == "Resultados de la encuesta":
 
         st.subheader("Horas del dia sentado en los encuestados")
     
-        sedentarismo= alt.Chart(df).mark_bar().encode(alt.X("Sedentarismo horas",bin= True, title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400).interactive()
+        sedentarismo= alt.Chart(df).mark_bar().encode(alt.X("Sedentarismo%_horas:Q",bin= alt.bin(maxbins=15), title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400).interactive()
 
         st.altair_chart(sedentarismo,user_container_width=True)                                                            
 
                                                                     
-# Cargar datos
-
-    df = load_data()
-    st.dataframe(df.head()) #https://www.youtube.com/watch?v=7E3yxq-P-a8
+        st.dataframe(df.head()) #https://www.youtube.com/watch?v=7E3yxq-P-a8
 
 ###########################################################################################################
 
