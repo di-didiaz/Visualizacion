@@ -50,7 +50,7 @@ if selected == "Resultados de la encuesta":
     
         sedentarismo= alt.Chart(df).mark_bar().encode(alt.X("Sedentarismo%_horas:Q",bin= True, title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400).interactive()
 
-        st.altair_chart(sedentarismo,user_container_width=True)                                                            
+        st.altair_chart(sedentarismo,use_container_width=True)                                                            
 
                                                                     
         st.dataframe(df.head()) #https://www.youtube.com/watch?v=7E3yxq-P-a8
