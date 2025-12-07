@@ -77,21 +77,21 @@ if selected == "Me siento saludable?":
         df_entrada= pd.DataFrame([{"Edad": edad, "Comunidad Autonoma": comunidad, "Estudios": estudios,  "Actividad_física_cat": actividad, "Sedentarismo%_horas": sedentarismo, "Carne_frec": carne_frec}])
 
         
-        #cat_pred= catboost.predict(df_entrada)[0]
-        #cat_prob= catboost.predict_proba(df_entrada)[0].max()
-        #X_pp= preprocesador.transform(df_entrada)
-        #ord_pred= modord.predict(X_pp)[0]
-        #ord_prob= modord.predict_proba(X_pp)[0].max()
+        cat_pred= catboost.predict(df_entrada)[0]
+        cat_prob= catboost.predict_proba(df_entrada)[0].max()
+        X_pp= preprocesador.transform(df_entrada)
+        ord_pred= modord.predict(X_pp)[0]
+        ord_prob= modord.predict_proba(X_pp)[0].max()
 
-        #noms= {0: "Malo",1: "Regular",2: "Bueno"}
-        #cat_prediccion= noms[int(cat_pred)]
-        #mod_prediccion= noms[int(ord_pred)]
+        noms= {0: "Malo",1: "Regular",2: "Bueno"}
+        cat_prediccion= noms[int(cat_pred)]
+        mod_prediccion= noms[int(ord_pred)]
         
         st.subheader("Resultados del modelo")
         st.write(df_entrada.columns.tolist())
 
-        #st.write("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
-        #st.write("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
+        st.write("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
+        st.write("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
 
         st.success("Predicción generada")
 
