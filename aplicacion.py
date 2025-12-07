@@ -34,7 +34,7 @@ if selected == "Resultados de la encuesta":
 
         st.subheader("🗺️ Haz clic en una comunidad autónoma")
     
-        mapa_salud= df.groupby("Comunidad Autonoma")["Salud_Percibida"].mean().reset_index()
+        mapa_salud= df.groupby("Comunidad Autonoma")["Salud_Percibida"].count_values().reset_index()
         mapa_salud.columns=["Comunidad Automoma" "Media percepcion de salud"]
     
         mapa= alt.Chart(mapa_salud).mark_geoshape(stroke="white").encode(color=alt.Color("Media percepcion de salud", title= "Salud percibida media")).properties(width=800, height=500).interactive()
