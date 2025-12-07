@@ -26,6 +26,8 @@ if selected == "Resultados de la encuesta":
     st.write("""Esta sección te permite visualizar resultados de la
              [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
     st.subheader("Datos por comunidad")
+
+    df=load_data()
     
     tab1, tab2 = st.tabs(["Salud", "Sedentarismo"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
     with tab1:
@@ -56,9 +58,9 @@ if selected == "Resultados de la encuesta":
 ###########################################################################################################
 
 # Sección Predecir percepción de salud
-if selected == "Me siento saludable?":
-    st.title("Predecir mi percepción de salud")
-    st.subheader("Aquí podrás predecir tu salud basado en los datos de la población en España")
+if selected == "Predicción personalizada":
+    st.title("Predecir mis riesgos de salud")
+    st.subheader("Aquí podrás predecir tus riesgos de salud segun los datos de la población en España")
 
     df = load_data()
     catboost= joblib.load("datos/catboost_slt.joblib")
