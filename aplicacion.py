@@ -88,11 +88,10 @@ if selected == "Me siento saludable?":
         cat_prediccion= noms[int(cat_pred)]
         mod_prediccion= noms[int(ord_pred)]
         
-        st.subheader("Resultados del modelo")
-        st.write(df_entrada.columns.tolist())
-
-        st.write("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
-        st.write("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
+        st.subheader("Tus resultados")
+        
+        st.subheader("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
+        st.subheader("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
 
         st.success("Predicción generada")
 
