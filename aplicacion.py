@@ -65,7 +65,7 @@ if selected == "Me siento saludable?":
 
     df = load_data()
     catboost= joblib.load("datos/catboost.joblib")
-    xgboost= joblib.load("datos/xgboost.joblib")
+    modord= joblib.load("datos/modelo_ord.joblib")
     preprocesador= joblib.load("datos/preprocesador.joblib")
 
 # Entradas de los usuarions
@@ -92,18 +92,18 @@ if selected == "Me siento saludable?":
         X_pp= preprocesador.transform(df_entrada)
         cat_pred= catboost.predict(df_entrada)[0]
         cat_prob= catboost.predict_proba(df_entrada)[0].max()
-        xgb_pred= xgboost.predict(X_pp)[0]
-        xgb_prob= xgboost.predict_proba(X_pp)[0].max()
+        ord_pred= modord.predict(X_pp)[0]
+        ord_prob= modord.predict_proba(X_pp)[0].max()
 
         noms= {0: "Malo",1: "Regular",2: "Bueno"}
         cat_noms= noms.get(int(cat_pred), str(cat_pred))
-        xgb_noms= noms.get(int(xgb_pred), str(xgb_pred))
+        mod_noms= noms.get(int(xgb_pred), str(ord_pred))
 
         st.subheader("Resultados del modelo")
 
         st.write("CatBoost → "+cat_noms+"  (confianza: "+ str(round(cat_prob, 2))+")")
-        xgb_text = "XGBoost → "+ xgb_noms
-        xgb_text = xgb_text+ "  (confianza: "+ str(round(xgb_prob, 2)) + ")"
-        st.write(xgb_text)
+        ord_text = "Ordinal → "+ mod_noms
+        ord_text = ord_text+ "  (confianza: "+ str(round(ord_prob, 2)) + ")"
+        st.write(ord_text)
 
         st.success("Predicción generada")
