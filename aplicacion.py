@@ -83,8 +83,8 @@ if selected == "Me siento saludable?":
         for c in cat_cols:
             df_entrada[c] = df_entrada[c].astype(str)
 
-        cat_pred= catboost.predict(df_entrada.copy())[0]
-        cat_prob= catboost.predict_proba(df_entrada.copy())[0].max()
+        cat_pred= catboost.predict(df_entrada)[0]
+        cat_prob= catboost.predict_proba(df_entrada)[0].max()
         X_pp= preprocesador.transform(df_entrada)
         ord_pred= modord.predict(X_pp)[0]
         ord_prob= modord.predict_proba(X_pp)[0].max()
