@@ -43,7 +43,7 @@ if selected == "Resultados de la encuesta":
 
         st.subheader("Horas del dia sentado en los encuestados")
     
-        sedentarismo= alt.Chart(df)mark_bar().encode(alt.X("Sedentarismo horas",bin= True, title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400)
+        sedentarismo= alt.Chart(df).mark_bar().encode(alt.X("Sedentarismo horas",bin= True, title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400).interactive()
 
         st.altair_chart(sedentarismo,user_container_width=True)                                                            
 
