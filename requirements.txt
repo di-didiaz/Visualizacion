@@ -5,4 +5,5 @@ numpy
 scikit-learn==1.6.1
 joblib
 catboost
+mord
 xgboost
