@@ -64,46 +64,41 @@ if selected == "Me siento saludable?":
     st.subheader("Aquí podrás predecir tu salud basado en los datos de la población en España")
 
     df = load_data()
-    catboost= joblib.load("datos/catboost.joblib")
-    modord= joblib.load("datos/modelo_ord.joblib")
-    preprocesador= joblib.load("datos/preprocesador.joblib")
+    catboost= joblib.load("datos/catboost_slt.joblib")
+    modord= joblib.load("datos/modelo_ord_slt.joblib")
+    preprocesador= joblib.load("datos/preprocesador_slt.joblib")
 
 # Entradas de los usuarions
     st.markdown("Introduce los datos abajo para obtener la predicción.")
-    edad= st.slider("Selecciona tu edad", 0, 100, 25)
-    st.write("👶 Tu edad es:", edad)
-
+    edad= st.slider("👶 Selecciona tu edad", 0, 100, 25)
+    comunidad= st.selectbox("Comunidad Autónoma", ["Andalucia","Aragon","Asturias","Islas Baleares","Canarias","Cantabria", "Castilla-La Mancha","Castilla y León","Cataluña",
+                                                   "Extremadura","Galicia","Madrid","Murcia","Navarra","La Rioja","Pais Vasco","Comunidad Valenciana","Ceuta","Melilla"])
+    estudios= st.selectbox("👩‍🏫 Que estudios tienes?",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
+                                                   "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
     actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Bajo", "Ocasional", "Regular", "Sedentario"])
     # Esto hay que cambiarlo despues a ["1 o 2 veces", "3 veces", "4 o mas veces", "Nunca"] para volverlo a hacer ["Bajo", "Ocasional", "Regular", "Sedentario"])
 
-    sedentarismo=st.number_input("🦥 Cuántas horas pasas sentado al dia en un dia normal?",min_value=0, max_value=24, value=6)
+    horas_sentado=st.number_input("🦥 Cuántas horas pasas sentado al dia en un dia normal?",min_value=0, max_value=24, value=6)
+    sedentarismo= horas_sentado/24
+    carne_frec= st.selectbox("🥩 Cuántas piezas de carne comes como máximo a la semana?. Si comes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=2)
 
-    # Esto hay que cambiarlo despues a % del de dia
-
-    carne_frec= st.selectbox("🥩 Cuántas piezas de carne comes como máximo a la semana?. Si comes más de 10, elije 10",[0,3,5,7,10], index=2)
-
-    imc_cat= st.selectbox("Cuál es tu IMC?",["Bajo", "Normal", "Sobrepeso", "Obesidad"])
-
-    # Esto hay que cambiarlo a peso y altura para calcularlo e incluilo dentro del rango
 
     if st.button("Predecir ahora!"):
-        df_entrada= pd.DataFrame([{"Edad": edad, "Actividad_física_cat": actividad,"Sedentarismo%_horas": sedentarismo, "IMC_cat": imc_cat, "Carne_frec": carne_frec}])
+        df_entrada= pd.DataFrame([{"Edad": edad, "Comunidad Autonoma": comunidad, "Actividad_física_cat": actividad,"Sedentarismo%_horas": sedentarismo, "Estudios": estudios, "Carne_frec": carne_frec}])
 
+        cat_pred= catboost.predict(df_entrada.copy)[0]
+        cat_prob= catboost.predict_proba(df_entrada.copy)[0].max()
         X_pp= preprocesador.transform(df_entrada)
-        cat_pred= catboost.predict(df_entrada)[0]
-        cat_prob= catboost.predict_proba(df_entrada)[0].max()
         ord_pred= modord.predict(X_pp)[0]
         ord_prob= modord.predict_proba(X_pp)[0].max()
 
         noms= {0: "Malo",1: "Regular",2: "Bueno"}
-        cat_noms= noms.get(int(cat_pred), str(cat_pred))
-        mod_noms= noms.get(int(xgb_pred), str(ord_pred))
+        cat_prediccion= noms[int(cat_pred)]
+        mod_prediccion= noms[(int(ord_pred)]
 
         st.subheader("Resultados del modelo")
 
-        st.write("CatBoost → "+cat_noms+"  (confianza: "+ str(round(cat_prob, 2))+")")
-        ord_text = "Ordinal → "+ mod_noms
-        ord_text = ord_text+ "  (confianza: "+ str(round(ord_prob, 2)) + ")"
-        st.write(ord_text)
+        st.write("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
+        st.write("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
 
         st.success("Predicción generada")
