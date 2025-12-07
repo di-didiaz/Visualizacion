@@ -66,8 +66,8 @@ if selected == "Me siento saludable?":
                                                    "Extremadura","Galicia","Madrid","Murcia","Navarra","La Rioja","Pais Vasco","Comunidad Valenciana","Ceuta","Melilla"])
     estudios= st.selectbox("👩‍🏫 Que estudios tienes?",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
-    actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Bajo", "Ocasional", "Regular", "Sedentario"])
-    # Esto hay que cambiarlo despues a ["1 o 2 veces", "3 veces", "4 o mas veces", "Nunca"] para volverlo a hacer ["Bajo", "Ocasional", "Regular", "Sedentario"])
+    actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Activo", "Ocasional", "Regular", "Sedentario"])
+    # Esto hay que cambiarlo despues a ["1 o 2 veces", "3 veces", "4 o mas veces", "Nunca"] para volverlo a hacer  ["Activo", "Ocasional", "Regular", "Sedentario"])
 
     horas_sentado=st.number_input("🦥 Cuántas horas pasas sentado al dia en un dia normal?",min_value=0, max_value=24, value=4)
     sedentarismo= horas_sentado/24
