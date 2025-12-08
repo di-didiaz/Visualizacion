@@ -4,6 +4,8 @@ import altair as alt
 from streamlit_option_menu import option_menu
 import joblib
 import numpy as np
+import plotly.express as px
+import json
 
 
 # Crear pagina
@@ -30,11 +32,35 @@ if selected == "Resultados de la encuesta":
     df=load_data()
     
     tab1, tab2 = st.tabs(["Salud", "Sedentarismo"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
+
     with tab1:
 
         st.subheader("🗺️ Haz clic en una comunidad autónoma")
 
         # ver https://discuss.streamlit.io/t/interactive-maps/82782
+        df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
+
+        # Proporcion por comunidad
+        total_comunidad = df_prop.groupby("Comunidad Autonoma")["count"].transform("sum")
+        df_prop["prop"] = df_prop["count"]/total_comunidad
+
+        with open("datos/spain-communities.geojson") as r:
+            geoson_mapa= json.load(r)
+        df_mapa= (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
+
+        mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
+                                featureidkey="name", color="Salud_Percibida",hover_name="Comunidad Autonoma",
+                                title="Puntuación mas alta de salud", color_continuous_scale="Viridis")
+
+        event= st.plotly_chart(mapaccaa, on_select="rerun",selection_mode=["points","box","lasso"])
+        points= event["selection"].get("points",[])
+        if points:
+            first_point= points[0]
+            sigla = first_point["properties"].get("sigla", None)
+        else:
+            sigla = None
+
+
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
 
         # Proporcion por comunidad
