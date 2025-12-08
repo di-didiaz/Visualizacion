@@ -61,8 +61,9 @@ if selected == "Resultados de la encuesta":
 
 # Sección Predecir percepción de salud
 if selected == "Predicción personalizada":
-    st.title("Predecir mis riesgos de salud")
-    st.subheader("Aquí podrás predecir tus riesgos de salud segun los datos de la población en España")
+    st.title("Mis riesgos de salud")
+    st.subheader("Introduce tus datos para predecir si tienes riesgo de padecer de Hipertension, Diabetes y Colesterol")
+    st.caption("Estas predicciones no son diagnosticos de salud.")
 
     df = load_data()
     catboost= joblib.load("datos/catboost_slt.joblib")
@@ -70,22 +71,18 @@ if selected == "Predicción personalizada":
     preprocesador= joblib.load("datos/preprocesador_slt.joblib")
 
 # Entradas de los usuarions
-    st.markdown("Introduce los datos abajo para obtener la predicción.")
-    edad= st.slider("👶 Selecciona tu edad", 0, 100, 35)
-    comunidad= st.selectbox("Comunidad Autónoma", ["País Vasco", "Castilla - La Mancha", "Comunitat Valenciana",
-       "Andalucía", "Castilla y León", "Extremadura", "Balears, Illes","Cataluña", "Galicia", "Aragón", "Rioja, La","Madrid, Comunidad de", "Murcia, Región de",
-       "Navarra, Comunidad Foral de", "Asturias, Principado de","Canarias", "Cantabria", "Ceuta", "Melilla"])
-    estudios= st.selectbox("👩‍🏫 Que estudios tienes?",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
+    st.markdown("---------------------------")
+    edad= st.slider("Selecciona tu edad", 15, 100, 35, "help=Desliza el punto hasta llegar a tu edad")
+    peso= st.slider("Introduce tu peso estimado en kilos", 35, 200, 70)
+    altura= st.slider("Introduce tu altura estimada en centímetros", 80, 165, 220)  
+    imc= peso/(altura**2)
+    estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
-    actividad= st.selectbox( "💪Cuantas veces a la semana haces actividad física?", ["Activo", "Ocasional", "Regular", "Sedentario"])
-    # Esto hay que cambiarlo despues a ["1 o 2 veces", "3 veces", "4 o mas veces", "Nunca"] para volverlo a hacer  ["Activo", "Ocasional", "Regular", "Sedentario"])
-
-    horas_sentado=st.number_input("🦥 Cuántas horas pasas sentado al dia en un dia normal?",min_value=0, max_value=24, value=4)
-    sedentarismo= horas_sentado/24
-    carne_frec= st.selectbox("🥩 Cuántas piezas de carne comes como máximo a la semana?. Si comes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3)
+    sedentarismo=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
+    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3)
 
     if st.button("Predecir ahora!"):
-        df_entrada= pd.DataFrame([{"Edad": edad, "Comunidad Autonoma": comunidad, "Estudios": estudios,  "Actividad_física_cat": actividad, "Sedentarismo%_horas": sedentarismo, "Carne_frec": carne_frec}])
+        df_entrada= pd.DataFrame([{"Edad": edad, 'IMC': imc,"Estudios": estudios, "Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": sedentarismo, "Peso": peso, "Altura": altura}])
 
         
         cat_pred= catboost.predict(df_entrada)[0]
