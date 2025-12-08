@@ -35,7 +35,7 @@ if selected == "Resultados de la encuesta":
 
     with tab1:
 
-        st.subheader("🗺️ Haz clic en una comunidad autónoma")
+        st.subheader("Haz clic en una comunidad autónoma para...")
 
         # ver https://discuss.streamlit.io/t/interactive-maps/82782
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
@@ -46,11 +46,12 @@ if selected == "Resultados de la encuesta":
 
         with open("datos/spain-communities.geojson") as r:
             geoson_mapa= json.load(r)
-        df_mapa= (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
+        df_mapa= (df.groupby("Comunidad Autonoma")["IMC"].mean().reset_index())
 
         mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
-                                featureidkey="name", color="Salud_Percibida",hover_name="Comunidad Autonoma",
+                                featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma",
                                 title="Puntuación mas alta de salud", color_continuous_scale="Viridis")
+        mapaccaa.update_geos(fitbounds="locations", visible=False)
 
         event= st.plotly_chart(mapaccaa, on_select="rerun",selection_mode=["points","box","lasso"])
         points= event["selection"].get("points",[])
