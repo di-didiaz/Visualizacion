@@ -63,42 +63,49 @@ if selected == "Resultados de la encuesta":
 if selected == "Predicción personalizada":
     st.title("Mis riesgos de salud")
     st.subheader("Introduce tus datos para predecir si tienes riesgo de padecer de Hipertension, Diabetes y Colesterol")
-    st.caption("Estas predicciones no son diagnosticos de salud.")
+    st.caption("Recuerda: Estas predicciones no son diagnosticos de salud.")
 
     df = load_data()
-    catboost= joblib.load("datos/catboost_slt.joblib")
-    modord= joblib.load("datos/modelo_ord_slt.joblib")
+    diabetes= joblib.load("datos/diabetes.joblib")
+    hipertension= joblib.load("datos/hipertension.joblib")
+    colesterol= joblib.load("datos/colesterol.joblib")
     preprocesador= joblib.load("datos/preprocesador_slt.joblib")
 
 # Entradas de los usuarions
     st.markdown("---------------------------")
-    edad= st.slider("Selecciona tu edad", 15, 100, 35, "help=Desliza el punto hasta llegar a tu edad")
-    peso= st.slider("Introduce tu peso estimado en kilos", 35, 200, 70)
-    altura= st.slider("Introduce tu altura estimada en centímetros", 80, 165, 220)  
+    edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
+    altura= st.slider("Introduce tu altura estimada en centímetros", 80, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
+    peso= st.number_input("Introduce tu peso estimado en kilos", 35, 200, 70, help="Usa un estimado o tu última medición")
     imc= peso/(altura**2)
     estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
     sedentarismo=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
-    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3)
+    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias significan que bebes un refresco y medio")
 
     if st.button("Predecir ahora!"):
         df_entrada= pd.DataFrame([{"Edad": edad, 'IMC': imc,"Estudios": estudios, "Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": sedentarismo, "Peso": peso, "Altura": altura}])
 
         
-        cat_pred= catboost.predict(df_entrada)[0]
-        cat_prob= catboost.predict_proba(df_entrada)[0].max()
+        diabetes_pred= diabetes.predict(df_entrada)[0]
+        diabetes_prob= diabetes.predict_proba(df_entrada)[0].max()
 
-        ord_pred= modord.predict(df_entrada)[0]
-        ord_prob= modord.predict_proba(df_entrada)[0].max()
+        hipertension_pred= hipertension.predict(df_entrada)[0]
+        hipertension_prob= hipertension.predict_proba(df_entrada)[0].max()
 
-        noms= {0: "Malo",1: "Regular",2: "Bueno"}
-        cat_prediccion= noms[int(cat_pred)]
-        mod_prediccion= noms[int(ord_pred)]
+        colesterol_pred= colesterol.predict(df_entrada)[0]
+        colesterol_prob= colesterol.predict_proba(df_entrada)[0].max()
+
+        noms= {0: "Genial, no tienes riesgo",1: "Hay riesgo, revisa las recomendaciones abajo"}
+        diabetes_prediccion= noms[int(diabetes_pred)]
+        hipertension_prediccion= noms[int(hipertension_pred)]
+        colesterol_prediccion= noms[int(colesterol_pred)]
         
         st.subheader("Tus resultados")
         
-        st.subheader("Prediccón Catboost→ "+cat_prediccion+"(confianza:"+ str(round(cat_prob, 2)))
-        st.subheader("Prediccion Ordinal→ "+ mod_prediccion+"(confianza:"+str(round(ord_prob, 2)))
+        st.subheader("Tu probabilidad de padecer de diabetes es de → "+ str(round(diabetes_prob, 2)+"."+diabetes_pred))
+        st.subheader("Tu probabilidad de padecer de hipertension es de → "+ str(round(hipertension_prob, 2)+"."+hipertension_pred))
+        st.subheader("Tu probabilidad de padecer de colesterol es de → "+ str(round(colesterol_prob, 2)+"."+colesterol_pred))
+        
 
         st.success("Predicción generada")
 
