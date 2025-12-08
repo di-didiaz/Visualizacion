@@ -1,13 +1,12 @@
-[server]
-enableStaticServing = true
-
+# Referencia de https://github.com/jrieke/advanced-theming-examples/blob/main/anthropic-dark/.streamlit/config.toml
 [theme]
-primaryColor = "#ae5630"
-backgroundColor = "#2a2a28"
-secondaryBackgroundColor = "#232220"
-textColor = "#e5e5e2"
-linkColor = "#e5e5e2"
-borderColor = "#343330"
+base= "light"
+primaryColor = "#000078"
+backgroundColor = "#F0F0F0"
+secondaryBackgroundColor = "#D0D0D0"
+textColor = "#000078"
+linkColor = "#D6FAFF"
+borderColor = "#D0D0D0"
 showWidgetBorder = true
 baseRadius = "0.6rem"
 font = "Styrene B"
