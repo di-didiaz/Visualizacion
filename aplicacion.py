@@ -129,10 +129,8 @@ if selected == "Predicción personalizada":
         
         st.subheader("Tus resultados")
         
-        st.subheader("Tu probabilidad de padecer de diabetes es de → "+ str(round(diabetes_prob, 2)+"."+diabetes_pred))
-        st.subheader("Tu probabilidad de padecer de hipertension es de → "+ str(round(hipertension_prob, 2)+"."+hipertension_pred))
-        st.subheader("Tu probabilidad de padecer de colesterol es de → "+ str(round(colesterol_prob, 2)+"."+colesterol_pred))
+        st.text(diabetes_prediccion)
+        st.text(hipertension_prediccion)
+        st.text(colesterol_prediccion)
         
-
-        st.success("Predicción generada")
 
