@@ -7,3 +7,4 @@ joblib
 catboost
 mord
 xgboost
+streamlit-plotly-events
