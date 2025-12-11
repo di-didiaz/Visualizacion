@@ -189,20 +189,29 @@ if selected == "Predicción personalizada":
 
     col41, col42, col43, col44, col45= st.columns(5)
 
-    edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
-    altura= st.slider("Introduce tu altura estimada en centímetros", 100, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
-    peso= st.number_input("Introduce tu peso estimado en kilos", 32, 200, 70, help="Usa un estimado o tu última medición")
-    imc= peso/((altura/100)**2)
-    estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
+    Edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
+    Altura= st.slider("Introduce tu altura estimada en centímetros", 100, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
+    Peso= st.number_input("Introduce tu peso estimado en kilos", 32, 200, 70, help="Usa un estimado o tu última medición")
+    IMC= Peso/((Altura/100)**2)
+    Estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
-    sedentarismo=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
+    Sedentarismo_horas=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
     Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias significan que bebes un refresco y medio")
 
+   
     if st.button("Predecir ahora!"):
-        df_entrada= pd.DataFrame([{"Edad": edad, "IMC": imc,"Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": sedentarismo, "Peso": peso, "Altura": altura,"Estudios": estudios}])
+        df_entrada= pd.DataFrame([{"Edad": Edad, "IMC": IMC,"Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": Sedentarismo_horas, "Peso": Peso, "Altura": Altura,"Estudios": Estudios}])
+        # error del preprocesador
+        df_entrada.loc[0, "Edad"]= int(Edad)
+        df_entrada.loc[0, "IMC"]= float(IMC)
+        df_entrada.loc[0, "Refrescos_frec"]= float(Refrescos_frec)
+        df_entrada.loc[0, "Sedentarismo%_horas"]= float(Sedentarismo_horas)
+        df_entrada.loc[0, "Peso"]= float(Peso)
+        df_entrada.loc[0, "Altura"]= float(Altura)
+        df_entrada.loc[0, "Estudios"]= str(Estudios)
 
         df_procesado= preprocesador.transform(df_entrada)
-        
+       
         
         diabetes_pred= diabetes.predict(df_procesado)[0]
         diabetes_prob= diabetes.predict_proba(df_procesado)[0].max()
