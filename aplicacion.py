@@ -122,7 +122,7 @@ if selected == "Resultados de la encuesta":
         st.caption("Los determinantes de salud son XYZ")
 
         st.subheader("Frecuencia de alimentación")
-        st.caption("Promedio de veces a la semana")
+        
 
         carne_prom= df['Carne_frec'].mean()
         refrescos_prom= df['Refrescos_frec'].mean()
@@ -138,6 +138,8 @@ if selected == "Resultados de la encuesta":
         col34.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
         col35.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
 
+        st.caption("Promedio de veces a la semana")
+
         st.markdown("----------")
 
         lista_frec= ["Carne", "Refrescos", "Embutidos", "Lacteos", "Verduras"]
@@ -151,10 +153,18 @@ if selected == "Resultados de la encuesta":
         st.altair_chart(frec_hst,width='content')
 
         st.markdown("----------")
-    
-        sedentarismo= alt.Chart(df).mark_bar().encode(alt.X("Sedentarismo%_horas:Q",bin= True, title= "Horas sentado"), alt.Y("count()")).properties(width=600, height=400).interactive()
 
-        st.altair_chart(sedentarismo,width='content')                                                            
+        st.subheader("Horas sentados al día")
+        # Ver https://www.youtube.com/watch?v=rxWkIn1EZnM
+        # https://altair-viz.github.io/gallery/radial_chart.html
+        colores_sed=["#B6B8BEDA","#A9B3E0","#6679D8","#1724A0", "#030342"]
+        df["rangos"]= pd.cut(df["Sedentarismo%_horas"], bins=[0,2,4,6,8,12,24], labels=["0-2 horas","2 a 4 horas","4-6 horas","6 a 8 horas","8 a 12 horas","Mas de 12 hoaas"],include_lowest=True)
+        sedentarismo= df["rangos"].value_counts().reset_index()
+        sedentarismo.columns= ["Rangos", "Personas"] 
+
+        sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de Horas sentados al dia").interactive()
+
+        st.altair_chart(sedentarismo_pie,width='content')                                                            
 
                                                                     
         
