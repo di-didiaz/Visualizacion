@@ -34,7 +34,7 @@ if selected == "Resultados de la encuesta":
 
     lac_prom= df['Lacteos_frec'].mean(skipna=True)
     hsentado_prom=df['Sedentarismo%_horas'].mean(skipna=True)
-    porc_diabetes=df['Diabetes_bin'].mean(skipna=True)*100
+    porc_hipert=df['Hipertension_bin'].mean(skipna=True)*100
     
     # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
 
@@ -42,14 +42,14 @@ if selected == "Resultados de la encuesta":
 
     col1.metric(label="Consumo de carne promedio", value=f"{lac_prom:.2f}")
     col2.metric(label="Promedio de horas sentados/dia", value=f"{hsentado_prom:.2f}")
-    col3.metric(label="Porcentaje de personas diabeticas", value=f"{porc_diabetes:.2f}%")
+    col3.metric(label="Porcentaje de personas hipertensas", value=f"{porc_hipert:.2f}%")
 
     st.markdown("---------------------------")
 
  #####################################################################
  # Tabs   
   
-    tab1, tab2, tab3 = st.tabs(["Composición Física", "Salud percibida", "Determinantes de Salud"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
+    tab1, tab2, tab3= st.tabs(["Composición Física", "Salud percibida", "Determinantes de Salud"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
 
 ###### Tab 1 ####### 
     with tab1:
@@ -57,7 +57,7 @@ if selected == "Resultados de la encuesta":
         st.header("Composición fisica por comunidad autonoma")
         st.caption(" El IMC es la medida de XYZ importante porque XYZ") 
 
-        df_mapa= df.groupby("Comunidad Autonoma").agg(IMC_prom=('IMC','mean'),peso_prom=('Peso','mean'), edad_prom= ('Edad','mean'), n=('IMC','count')).reset_index()
+        df_mapa= df.groupby("Comunidad Autonoma").agg(IMC=('IMC','mean'),Peso=('Peso','mean'), Edad= ('Edad','mean'), n=('IMC','count')).round(2).reset_index()
         
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
 
@@ -67,21 +67,21 @@ if selected == "Resultados de la encuesta":
         
 
         mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
-                                featureidkey="properties.name", color="IMC_prom",hover_name="Comunidad Autonoma", hover_data={'IMC_prom', 'peso_prom', 'edad_prom'}, labels={'IMC_prom': 'Promedio IMC'},
-                                title="IMC medio por comunidad autonoma. Haz click y zoom para ver detalles por comunidad", color_continuous_scale="Viridis")
+                                featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma", hover_data={'IMC', 'Peso', 'Edad'}, labels={'IMC': 'Promedio IMC'},
+                                title="IMC medio por comunidad autonoma. Haz click y zoom para ver detalles por comunidad", color_continuous_scale="teal")
         mapaccaa.update_geos(fitbounds="locations", visible=False)
-        mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':50})
+        mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':80})
         select=st.plotly_chart(mapaccaa,width='content')
 
         st.markdown("----------------")
 
-        st.subheader("Mas detalles:") 
+        st.subheader("Explora por comunidad:") 
         com_selec=st.selectbox("Selecciona o busca una comunidad de tu interes:", options=[""]+ df['Comunidad Autonoma'].dropna().unique().tolist())
         if com_selec:
             ca_elegida= df[df["Comunidad Autonoma"]==com_selec]
-            tabla_ca=ca_elegida.groupby('Sexo').agg(sexo=('Sexo','count'), peso_ca= ('Peso', 'mean'), imc_ca= ('IMC','mean')).reset_index()
+            tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
             st.subheader(f"Resultados de {com_selec}")
-            st.dataframe(tabla_ca) #https://www.youtube.com/watch?v=7E3yxq-P-a8
+            st.dataframe(tabla_ca, hide_index= True) #https://www.youtube.com/watch?v=7E3yxq-P-a8
 
         
  ###### Tab 2 #######       
@@ -163,7 +163,7 @@ if selected == "Resultados de la encuesta":
         col_df= frec_lista[opcion]
         lista_colores={"Carne": "#ECDAB2","Refrescos": "#DDBFB3","Embutidos": "#9999C9","Lacteos": "#D8D8EA","Verduras": "#000078"}
         colores=lista_colores[opcion]
-        frec_hst= alt.Chart(df).mark_bar(color=colores).encode(alt.X(col_df,bin=alt.Bin(maxbins=5), title= "Frecuencia de consumo semanal de "), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
+        frec_hst= alt.Chart(df).mark_bar(color=colores, binSpacing=0.5).encode(alt.X(col_df,bin=alt.Bin(maxbins=5), title= "Frecuencia de consumo semanal de "), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
         st.altair_chart(frec_hst,width='content')
 
         st.markdown("----------")
