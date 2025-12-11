@@ -11,7 +11,7 @@ showWidgetBorder = true
 baseRadius = "0.6rem"
 font = "Styrene B"
 codeFont = "Fira Code:https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap"
-codeBackgroundColor = "#232322"
+codeBackgroundColor = "#acacacff"
 showSidebarBorder = true
 headingFontSizes = ["40px", "32px", "24px"]
 headingFontWeights = 400

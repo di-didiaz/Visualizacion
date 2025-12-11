@@ -189,8 +189,8 @@ if selected == "Resultados de la encuesta":
 
 if selected == "Predicción personalizada":
     st.title("Mis riesgos de salud")
-    st.subheader("Introduce tus datos para predecir si tienes riesgo de padecer de Hipertension, Diabetes y Colesterol")
-    st.caption("Recuerda: Estas predicciones no son diagnosticos de salud.")
+    st.subheader("Introduce tus datos para predecir el riesgo de padecer de Hipertension, Diabetes y Colesterol")
+    st.caption("Recuerda: Estas predicciones son orientativas y no son diagnosticos de salud.")
 
     df = load_data()
     diabetes_m= joblib.load("datos/diabetes.joblib")
@@ -208,9 +208,9 @@ if selected == "Predicción personalizada":
     Peso= st.number_input("Introduce tu peso estimado en kilos", 32, 200, 70, help="Usa un estimado o tu última medición")
     IMC= Peso/((Altura/100)**2)
     Estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
-                                                   "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
-    Sedentarismo_horas=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
-    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias significan que bebes un refresco y medio")
+                                                   "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"], help="Incluye el utimo grado que hayas completado")
+    Sedentarismo_horas=st.number_input("Horas que pasas sentada en un dia",min_value=0, max_value=24, value=4, help="Horas del dia que normalmente pasas sentada")
+    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias indican la mitad de un refresco")
 
    
     if st.button("Predecir ahora!"):
@@ -224,17 +224,17 @@ if selected == "Predicción personalizada":
         df_entrada.loc[0, "Altura"]= float(Altura)
         df_entrada.loc[0, "Estudios"]= str(Estudios)
 
-        df_procesado= preprocesado.transform(df_entrada)
+        # procesado incluido en el pipeline df_procesado= preprocesado.transform(df_entrada)
        
         
-        diabetes_pred= diabetes_m.predict(df_procesado)[0]
-        diabetes_prob= diabetes_m.predict_proba(df_procesado)[0].max()
+        diabetes_pred= diabetes_m.predict(df_entrada)[0]
+        diabetes_prob= diabetes_m.predict_proba(df_entrada)[0].max()
 
-        hipertension_pred= hipertension_m.predict(df_procesado)[0]
-        hipertension_prob= hipertension_m.predict_proba(df_procesado)[0].max()
+        hipertension_pred= hipertension_m.predict(df_entrada)[0]
+        hipertension_prob= hipertension_m.predict_proba(df_entrada)[0].max()
 
-        colesterol_pred= colesterol_m.predict(df_procesado)[0]
-        colesterol_prob= colesterol_m.predict_proba(df_procesado)[0].max()
+        colesterol_pred= colesterol_m.predict(df_entrada)[0]
+        colesterol_prob= colesterol_m.predict_proba(df_entrada)[0].max()
 
         noms= {0: "Sin riesgo aparente según modelo",1: "Riesgo detectado: Consultar con un médico"}
 
@@ -245,21 +245,31 @@ if selected == "Predicción personalizada":
 
         with col41:
            st.subheader("Diabetes")
-           st.write(noms[int(diabetes_pred)])
+           if diabetes_pred==1:
+               st.warning(f"{noms[int(diabetes_pred)]}")
+           else:
+               st.success(noms[int(diabetes_pred)])
+          
            st.write(f"Probablidad: {diabetes_prob*100:.2f}%")
            conteo_digual=(df["Diabetes_bin"] == diabetes_pred).mean()*100
            st.info(f"{conteo_digual:.2f}% de la muestra obtuvieron el mismo resultado")
 
         with col42:
             st.subheader("Hipertension")
-            st.write(noms[int(hipertension_pred)])
+            if hipertension_pred==1:
+               st.warning(f"{noms[int(hipertension_pred)]}")
+            else:
+                st.success(noms[int(hipertension_pred)])
             st.write(f"Probablidad: {hipertension_prob*100:.2f}%")
             conteo_higual=(df["Hipertension_bin"] == hipertension_pred).mean()*100
             st.info(f"{conteo_higual:.2f}% de la muestra obtuvieron el mismo resultado")
 
         with col43:
             st.subheader("Colesterol")
-            st.write(noms[int(colesterol_pred)])
+            if colesterol_pred ==1:
+                st.warning(f"{noms[int(colesterol_pred)]}")
+            else:
+                st.success(noms[int(colesterol_pred)])
             st.write(f"Probablidad: {colesterol_prob*100:.2f}%")
             conteo_cigual=(df["Colesterol_bin"] == colesterol_pred).mean()*100
             st.info(f"{conteo_cigual:.2f}% de la muestra obtuvieron el mismo resultado")
