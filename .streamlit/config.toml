@@ -5,7 +5,7 @@ primaryColor = "#000078"
 backgroundColor = "#F0F0F0"
 secondaryBackgroundColor = "#D0D0D0"
 textColor = "#000078"
-linkColor = "#D6FAFF"
+linkColor = "#0f5df8bb"
 borderColor = "#D0D0D0"
 showWidgetBorder = true
 baseRadius = "0.6rem"
@@ -17,7 +17,7 @@ headingFontSizes = ["40px", "32px", "24px"]
 headingFontWeights = 500
 
 [theme.sidebar]
-backgroundColor = "#21201f"
+backgroundColor = "#D0D0D0"
 secondaryBackgroundColor = "#232220"
 
 
