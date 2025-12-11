@@ -212,7 +212,7 @@ if selected == "Predicción personalizada":
     col41, col42, col43, col44, col45= st.columns(5)
 
     Edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
-    Altura= st.slider("Introduce tu altura estimada en centímetros", 100, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
+    Altura= st.slider("Introduce tu altura estimada en centímetros", 100, 210, 170,help="Desliza el punto hasta llegar a tu altura")  
     Peso= st.number_input("Introduce tu peso estimado en kilos", 32, 200, 70, help="Usa un estimado o tu última medición")
     IMC= Peso/((Altura/100)**2)
     Estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
