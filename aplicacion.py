@@ -48,18 +48,21 @@ if selected == "Resultados de la encuesta":
 
  #####################################################################
  # Tabs   
+  
     tab1, tab2, tab3 = st.tabs(["Composición Física", "Salud percibida", "Determinantes de Salud"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
 
+###### Tab 1 ####### 
     with tab1:
 
         st.header("Composición fisica por comunidad autonoma")
         st.write("Haz click para ver detalles por comunidad")
+        st.caption(" El IMC es la medida de XYZ importante porque XYZ") 
 
         df_mapa= df.groupby("Comunidad Autonoma").agg(IMC_prom=('IMC','mean'),peso_prom=('Peso','mean'), edad_prom= ('Edad','mean'), n=('IMC','count')).reset_index()
         
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
 
-               # ver https://discuss.streamlit.io/t/interactive-maps/82782
+        # tomado de https://discuss.streamlit.io/t/interactive-maps/82782
         with open("datos/spain-communities.geojson") as r:
             geoson_mapa= json.load(r)
         
@@ -69,27 +72,17 @@ if selected == "Resultados de la encuesta":
                                 title="IMC medio por comunidad autonoma", color_continuous_scale="Viridis")
         mapaccaa.update_geos(fitbounds="locations", visible=False)
         mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':50})
-
         select=st.plotly_chart(mapaccaa,use_container_width=True)
-        event= st.plotly_chart(mapaccaa, on_select="rerun",selection_mode=["points","box","lasso"])
-        points= event["selection"].get("points",[])
-        if points:
-            first_point= points[0]
-            sigla = first_point["properties"].get("sigla", None)
-        else:
-            sigla = None
 
+        com_selec=st.selectbox("Selecciona o busca una comunidad de tu interes:", options=[""]+ df['Comunidad Autonoma'].dropna().unique().tolist())
+        if com_selec:
+            ca_elegida= df[df["Comunidad Autonoma"]==com_selec]
+            tabla_ca=ca_elegida.groupby('Sexo').agg(sexo=('Sexo','count'), peso_ca= ('Peso', 'mean'), imc_ca= ('IMC','mean')).reset_index()
+            st.subheader(f"Resultados de {com_selec}")
+            st.dataframe(tabla_ca)
 
-        df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
-
-        # Proporcion por comunidad
-        total_comunidad = df_prop.groupby("Comunidad Autonoma")["count"].transform("sum")
-        df_prop["prop"] = df_prop["count"]/total_comunidad
-
-        mapa= alt.Chart(df_prop).mark_bar().encode(x=alt.X("prop:Q", title="Proporción"),y=alt.Y("Comunidad Autonoma:N", sort='-x'), color=alt.Color("Salud_Percibida:N", title="Salud percibida"),
-                                                          tooltip=["Comunidad Autonoma", "Salud_Percibida", alt.Tooltip("prop:Q", format=".2f")]).properties(width=800, height=600).interactive()
-        st.altair_chart(mapa)
         
+ ###### Tab 2 #######       
     with tab2:
 
 
