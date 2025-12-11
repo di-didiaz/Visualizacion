@@ -1,5 +1,7 @@
 streamlit
 streamlit-option-menu
+plotly>=4.0.0
+streamlit[charts]
 streamlit-plotly-events
 pandas
 numpy

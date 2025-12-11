@@ -9,6 +9,7 @@ import json
 
 
 
+
 # Crear pagina
 st.set_page_config(page_title="Conoce y predice la Salud de España", page_icon="⚕️", layout="wide")
 
