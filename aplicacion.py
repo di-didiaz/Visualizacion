@@ -20,39 +20,57 @@ def load_data():
  #Se uso como referencia  https://www.youtube.com/watch?v=7E3yxq-P-a8
 with st.sidebar:
     selected = option_menu(menu_title="Menú", options=["Resultados de la encuesta", "Predicción personalizada"], icons=["clipboard-pulse", "stars"], 
-                           menu_icon="body-text",default_index=1)
+                           menu_icon="body-text",default_index=0)
 ###########################################################################################################
-# Pagina de inicio
-if selected == "Resultados de la encuesta":
-    st.title("Análisis y Predicción de datos de Salud")
-    st.write("""Esta sección te permite visualizar resultados de la
-             [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
-    st.subheader("Datos por comunidad")
+# Pagina de resutlados iniciales
 
-    df=load_data()
+if selected == "Resultados de la encuesta":
+
+    df= load_data()
+    st.title("Análisis y visualización de la Encuesta de Salud de España 2023")
+    st.write("""Esta sección te permite visualizar datos de la
+             [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
+    st.text("Algunas métricas relevantes:")
+
+    lac_prom= df['Lacteos_frec'].mean(skipna=True)
+    hsentado_prom=df['Sedentarismo%_horas'].mean(skipna=True)
+    porc_diabetes=df['Diabetes_bin'].mean(skipna=True)*100
     
-    tab1, tab2 = st.tabs(["Salud", "Sedentarismo"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
+    # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
+
+    col1,col2,col3=st.columns(3)
+
+    col1.metric(label="Consumo de carne promedio", value=f"{lac_prom:.2f}")
+    col2.metric(label="Promedio de horas sentados/dia", value=f"{hsentado_prom:.2f}")
+    col3.metric(label="Porcentaje de personas diabeticas", value=f"{porc_diabetes:.2f}%")
+
+    st.markdown("---------------------------")
+
+ #####################################################################
+ # Tabs   
+    tab1, tab2, tab3 = st.tabs(["Composición Física", "Salud percibida", "Determinantes de Salud"]) # Referencia de https://docs.streamlit.io/develop/api-reference/charts/st.altair_chart
 
     with tab1:
 
-        st.subheader("Haz clic en una comunidad autónoma para...")
+        st.header("Composición fisica por comunidad autonoma")
+        st.write("Haz click para ver detalles por comunidad")
 
-        # ver https://discuss.streamlit.io/t/interactive-maps/82782
+        df_mapa= df.groupby("Comunidad Autonoma").agg(IMC_prom=('IMC','mean'),peso_prom=('Peso','mean'), edad_prom= ('Edad','mean'), n=('IMC','count')).reset_index()
+        
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
 
-        # Proporcion por comunidad
-        total_comunidad = df_prop.groupby("Comunidad Autonoma")["count"].transform("sum")
-        df_prop["prop"] = df_prop["count"]/total_comunidad
-
+               # ver https://discuss.streamlit.io/t/interactive-maps/82782
         with open("datos/spain-communities.geojson") as r:
             geoson_mapa= json.load(r)
-        df_mapa= (df.groupby("Comunidad Autonoma")["IMC"].mean().reset_index())
+        
 
         mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
-                                featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma",
-                                title="Puntuación mas alta de salud", color_continuous_scale="Viridis")
+                                featureidkey="properties.name", color="IMC_prom",hover_name="Comunidad Autonoma", hover_data={'IMC_prom', 'peso_prom', 'edad_prom'}, labels={'IMC_prom': 'Promedio IMC'},
+                                title="IMC medio por comunidad autonoma", color_continuous_scale="Viridis")
         mapaccaa.update_geos(fitbounds="locations", visible=False)
+        mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':50})
 
+        select=st.plotly_chart(mapaccaa,use_container_width=True)
         event= st.plotly_chart(mapaccaa, on_select="rerun",selection_mode=["points","box","lasso"])
         points= event["selection"].get("points",[])
         if points:
