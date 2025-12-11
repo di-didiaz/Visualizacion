@@ -2,7 +2,7 @@
 [theme]
 base= "light"
 primaryColor = "#000078"
-backgroundColor = "#F0F0F0"
+backgroundColor = "#FFFFFF"
 secondaryBackgroundColor = "#D0D0D0"
 textColor = "#000078"
 linkColor = "#0f5df8bb"
@@ -14,11 +14,12 @@ codeFont = "Fira Code:https://fonts.googleapis.com/css2?family=Fira+Code:wght@30
 codeBackgroundColor = "#232322"
 showSidebarBorder = true
 headingFontSizes = ["40px", "32px", "24px"]
-headingFontWeights = 500
+headingFontWeights = 400
 
 [theme.sidebar]
-backgroundColor = "#D0D0D0"
-secondaryBackgroundColor = "#232220"
+backgroundColor = "#73EDFF"
+secondaryBackgroundColor = "#000078"
+textColor= "#f8f8ff"
 
 
 [[theme.fontFaces]]

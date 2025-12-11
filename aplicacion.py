@@ -157,21 +157,22 @@ if selected == "Resultados de la encuesta":
         st.subheader("Horas sentados al día")
         # Ver https://www.youtube.com/watch?v=rxWkIn1EZnM
         # https://altair-viz.github.io/gallery/radial_chart.html
-        colores_sed=["#B6B8BEDA","#A9B3E0","#6679D8","#1724A0", "#030342"]
+        colores_sed=["#73EDFF","#A9B3E0","#6679D8","#4D63D1", "#1724A0", "#030342"]
         df["rangos"]= pd.cut(df["Sedentarismo%_horas"], bins=[0,2,4,6,8,12,24], labels=["0-2 horas","2 a 4 horas","4-6 horas","6 a 8 horas","8 a 12 horas","Mas de 12 hoaas"],include_lowest=True)
         sedentarismo= df["rangos"].value_counts().reset_index()
         sedentarismo.columns= ["Rangos", "Personas"] 
 
-        sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de Horas sentados al dia").interactive()
-
-        st.altair_chart(sedentarismo_pie,width='content')                                                            
+        sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de horas/dia").interactive()
+        etiqueta=(alt.Chart(sedentarismo).mark_text(radius=160, size=12, color= "ghostwhite").encode(theta=alt.Theta("Personas", stack=True),text="Rangos"))
+        st.altair_chart(sedentarismo_pie+ etiqueta,width='content')                                                            
 
                                                                     
         
 
 ###########################################################################################################
 
-# Sección Predecir percepción de salud
+# Sección Predicción personalizada
+
 if selected == "Predicción personalizada":
     st.title("Mis riesgos de salud")
     st.subheader("Introduce tus datos para predecir si tienes riesgo de padecer de Hipertension, Diabetes y Colesterol")
@@ -185,10 +186,24 @@ if selected == "Predicción personalizada":
 
 # Entradas de los usuarions
     st.markdown("---------------------------")
-    edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
-    altura= st.slider("Introduce tu altura estimada en centímetros", 80, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
+
+    col41, col42, col43, col44, col45= st.columns(5)
+
+    col41.st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
+    col42.st.slider("Introduce tu altura estimada en centímetros", 80, 165, 210,help="Desliza el punto hasta llegar a tu altura")  
     peso= st.number_input("Introduce tu peso estimado en kilos", 35, 200, 70, help="Usa un estimado o tu última medición")
-    imc= peso/(altura**2)
+    imc= peso/((altura/100)**2)
+    estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
+                                                   "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
+    sedentarismo=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
+    Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias significan que bebes un refresco y medio")
+
+
+
+    edad= col41
+    altura= col42  
+    peso= st.number_input("Introduce tu peso estimado en kilos", 35, 200, 70, help="Usa un estimado o tu última medición")
+    imc= peso/((altura/100)**2)
     estudios= st.selectbox("Selecciona tu nivel de estudios",["Enseñanzas profesionales de grado medio o equivalentes", "Educación Primaria completa", "Estudios de Bachillerato", "Primera etapa de Enseñanza Secundaria, con o sin título (2º ESO aprobado, EGB, Bachillerato Elemental)",
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"])
     sedentarismo=st.number_input("Horas que pasas sentadx en un dia",min_value=0, max_value=24, value=4)
@@ -197,25 +212,34 @@ if selected == "Predicción personalizada":
     if st.button("Predecir ahora!"):
         df_entrada= pd.DataFrame([{"Edad": edad, 'IMC': imc,"Estudios": estudios, "Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": sedentarismo, "Peso": peso, "Altura": altura}])
 
+        df_procesado= preprocesador.transform(df_entrada)
         
-        diabetes_pred= diabetes.predict(df_entrada)[0]
-        diabetes_prob= diabetes.predict_proba(df_entrada)[0].max()
+        diabetes_pred= diabetes.predict(df_procesado)[0]
+        diabetes_prob= diabetes.predict_proba(df_procesado)[0].max()
 
-        hipertension_pred= hipertension.predict(df_entrada)[0]
-        hipertension_prob= hipertension.predict_proba(df_entrada)[0].max()
+        hipertension_pred= hipertension.predict(df_procesado)[0]
+        hipertension_prob= hipertension.predict_proba(df_procesado)[0].max()
 
-        colesterol_pred= colesterol.predict(df_entrada)[0]
-        colesterol_prob= colesterol.predict_proba(df_entrada)[0].max()
+        colesterol_pred= colesterol.predict(df_procesado)[0]
+        colesterol_prob= colesterol.predict_proba(df_procesado)[0].max()
+
+               
+        st.subheader("Tus resultados")
 
         noms= {0: "Genial, no tienes riesgo",1: "Hay riesgo, revisa las recomendaciones abajo"}
         diabetes_prediccion= noms[int(diabetes_pred)]
         hipertension_prediccion= noms[int(hipertension_pred)]
         colesterol_prediccion= noms[int(colesterol_pred)]
-        
-        st.subheader("Tus resultados")
-        
+
         st.text(diabetes_prediccion)
         st.text(hipertension_prediccion)
         st.text(colesterol_prediccion)
+
+
+        st.markdown("---------")
+        st.subheader("Recomendaciones generales")
+        st.caption("Recomendaciones orientativas. Siempre consulta con tu médico")
+
+        st.write("Las enfermedades cronicas se pueden manejar XYZ")
         
 
