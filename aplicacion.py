@@ -6,7 +6,7 @@ import joblib
 import numpy as np
 import plotly.express as px
 import json
-from streamlit_plotly_events import plotly_events
+
 
 
 # Crear pagina

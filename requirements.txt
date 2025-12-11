@@ -1,5 +1,6 @@
 streamlit
 streamlit-option-menu
+streamlit-plotly-events
 pandas
 numpy
 scikit-learn==1.6.1
@@ -7,4 +8,4 @@ joblib
 catboost
 mord
 xgboost
-streamlit-plotly-events
+
