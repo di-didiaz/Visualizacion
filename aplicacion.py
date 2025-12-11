@@ -112,9 +112,23 @@ if selected == "Resultados de la encuesta":
         col23.metric(f"{sexos[0]}",f"{cont_cronicidad.loc[sexos[0]]:.2f}%" )
         col24.metric(f"{sexos[1]}",f"{cont_cronicidad.loc[sexos[1]]:.2f}%" )
                                                                 
-        
-       
+        st.markdown("----------------")
 
+        st.subheader("Enfermedades crónicas comparadas")
+        enfermedades=['Hipertension_bin', 'Diabetes_bin', 'Colesterol_bin']
+        enfermedades_dic={"Hipertension":'Hipertension_bin',"Diabetes": 'Diabetes_bin', "Colesterol":'Colesterol_bin'}
+        enf_selec=st.multiselect("Selecciona las enfermedades a comparar: ", enfermedades_dic, default=["Diabetes","Hipertension"])
+        seleccion_final= [enfermedades_dic[e] for e in enf_selec]
+
+        conteo_enf=df[seleccion_final].sum()
+        total_enf= len(df)
+        porcentajes_enf= (conteo_enf/total_enf*100).round(2) 
+
+        enf_df=pd.DataFrame({'Enfermedad':enf_selec, 'Total':conteo_enf.values,'Porcentaje':porcentajes_enf.values})
+
+        multi_enf= alt.Chart(enf_df).mark_bar().encode(x=alt.X('Enfermedad', sort=None),y='Total',color='Enfermedad',tooltip=['Enfermedad', 'Total',alt.Tooltip('Porcentaje', format=".2f")]).properties(title="Personas con enfermedades seleccionadas")
+        st.altair_chart(multi_enf)
+ 
  ###### Tab 3 #######   
      
     with tab3:
@@ -179,10 +193,10 @@ if selected == "Predicción personalizada":
     st.caption("Recuerda: Estas predicciones no son diagnosticos de salud.")
 
     df = load_data()
-    diabetes= joblib.load("datos/diabetes.joblib")
-    hipertension= joblib.load("datos/hipertension.joblib")
-    colesterol= joblib.load("datos/colesterol.joblib")
-    preprocesador= joblib.load("datos/preprocesador_slt.joblib")
+    diabetes_m= joblib.load("datos/diabetes.joblib")
+    hipertension_m= joblib.load("datos/hipertension.joblib")
+    colesterol_m= joblib.load("datos/colesterol.joblib")
+    preprocesado= joblib.load("datos/preprocesador_slt.joblib")
 
 # Entradas de los usuarions
     st.markdown("---------------------------")
@@ -210,17 +224,17 @@ if selected == "Predicción personalizada":
         df_entrada.loc[0, "Altura"]= float(Altura)
         df_entrada.loc[0, "Estudios"]= str(Estudios)
 
-        df_procesado= preprocesador.transform(df_entrada)
+        df_procesado= preprocesado.transform(df_entrada)
        
         
-        diabetes_pred= diabetes.predict(df_procesado)[0]
-        diabetes_prob= diabetes.predict_proba(df_procesado)[0].max()
+        diabetes_pred= diabetes_m.predict(df_procesado)[0]
+        diabetes_prob= diabetes_m.predict_proba(df_procesado)[0].max()
 
-        hipertension_pred= hipertension.predict(df_procesado)[0]
-        hipertension_prob= hipertension.predict_proba(df_procesado)[0].max()
+        hipertension_pred= hipertension_m.predict(df_procesado)[0]
+        hipertension_prob= hipertension_m.predict_proba(df_procesado)[0].max()
 
-        colesterol_pred= colesterol.predict(df_procesado)[0]
-        colesterol_prob= colesterol.predict_proba(df_procesado)[0].max()
+        colesterol_pred= colesterol_m.predict(df_procesado)[0]
+        colesterol_prob= colesterol_m.predict_proba(df_procesado)[0].max()
 
         noms= {0: "Sin riesgo aparente según modelo",1: "Riesgo detectado: Consultar con un médico"}
 
