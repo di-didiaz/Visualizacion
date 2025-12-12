@@ -36,7 +36,7 @@ if selected == "Resultados de la encuesta":
 
     with col11: 
         st.subheader("➜ Datos Básicos")
-        st.caption("Generalidades de la encuesta")
+        ##st.caption("Generalidades de la encuesta")
 
         with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
             cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
@@ -87,7 +87,7 @@ if selected == "Resultados de la encuesta":
         # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
 
         st.subheader("➜ Resultados generales de salud y estilo de vida")
-        st.caption("Datos destacados")
+        ##st.caption("Datos destacados")
 
         with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
             cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
@@ -139,7 +139,7 @@ if selected == "Resultados de la encuesta":
     with tab1:
 
         st.subheader("Composición física por comunidad autonoma")
-        st.caption(" El ïndice de masa corporal (IMC) es un marcador indirecto de la grasa que puede ayudar a diagnosticar la obesidad. En el caso de los adultos, la OMS define el sobrepeso y la obesidad así: sobrepeso: IMC igual o superior a 25 y obesidad: IMC igual o superior a 30.") 
+        #st.caption("El ïndice de masa corporal (IMC) es un marcador indirecto de la grasa que puede ayudar a diagnosticar la obesidad. En el caso de los adultos, la OMS https://www.who.int/es/news-room/fact-sheets/detail/obesity-and-overweight define el sobrepeso y la obesidad así: sobrepeso: IMC igual o superior a 25 y obesidad: IMC igual o superior a 30.") 
 
         df_mapa= df.groupby("Comunidad Autonoma").agg(IMC=('IMC','mean'),Peso=('Peso','mean'), Edad= ('Edad','mean'), n=('IMC','count')).round(2).reset_index()
         
@@ -195,8 +195,8 @@ if selected == "Resultados de la encuesta":
     with tab2:
 
 
-        st.subheader("Salud percibida y cronicidad por sexo")
-        st.info("Los encuestados reportaron el sexo con el que se identificaban y el estado de salud como 'Muy bueno', 'Bueno', 'Regular', 'Malo' y 'Muy malo'")
+        st.subheader("Salud percibida y enfermedades por sexo")
+        st.info("Los encuestados **reportaron el sexo con el que se identificaban** y el estado de salud como 'Muy bueno', 'Bueno', 'Regular', 'Malo' y 'Muy malo'")
         salud_per=df[df['Salud_Percibida'].notna()]
         
         mb_bueno= salud_per['Salud_Percibida'].str.contains('Bueno| Muy bueno', case=False, na=False)
@@ -206,18 +206,18 @@ if selected == "Resultados de la encuesta":
         cont_cronicidad= cronicidad.groupby('Sexo')['Cronicidad_bin'].mean()*100
 
         sexos= list(buenos.index)
-        st.write("Buena salud percibida por sexos reportados")
+        st.markdown("""**Buena salud**: Percepcion de salud por sexos""")
         col21, col22= st.columns(2)
         
-        col21.metric(label=f"{sexos[0]}", value= f"{buenos.loc[sexos[0]]:.2f}%", border=True )
-        col22.metric(f"{sexos[1]}",f"{buenos.loc[sexos[1]]:.2f}%",border=True  )
+        col21.metric(label=f"♀ Hombres con buena salud", value= f"{buenos.loc[sexos[0]]:.2f}%", border=True )
+        col22.metric(f"♀ Mujeres con buena salud",f"{buenos.loc[sexos[1]]:.2f}%",border=True  )
 
-        st.caption("Los encuestados respondieron si padecian de alguna enfermedad crónica")
-
+        st.markdown("""**Enfermedades cronicas**:Padecimiento de enfermedades cronicas por sexo""")
+        
         col23, col24= st.columns(2)
             
-        col23.metric(f"{sexos[0]}",f"{cont_cronicidad.loc[sexos[0]]:.2f}%", border=True )
-        col24.metric(f"{sexos[1]}",f"{cont_cronicidad.loc[sexos[1]]:.2f}%", border=True )
+        col23.metric(f"♀ Hombres con enfermedades cronicas",f"{cont_cronicidad.loc[sexos[0]]:.2f}%", border=True )
+        col24.metric(f"♀ Mujeres con enfermedades cronicas",f"{cont_cronicidad.loc[sexos[1]]:.2f}%", border=True )
                                                                 
         st.markdown("----------------")
 
@@ -240,7 +240,7 @@ if selected == "Resultados de la encuesta":
      
     with tab3:
         st.header("Determinantes de salud: Dieta y actividad física")
-        st.caption("Los determinantes de salud son XYZ")
+        #st.caption("Los determinantes de salud son XYZ")
 
         st.subheader("Frecuencia de alimentación")
         
@@ -260,7 +260,7 @@ if selected == "Resultados de la encuesta":
         col34.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
         col35.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
 
-        st.caption("Promedio de veces a la semana")
+        st.text("Promedio de veces a la semana")
 
         st.markdown("----------")
         with st.container(height=450, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
@@ -336,7 +336,7 @@ if selected == "Resultados de la encuesta":
 if selected == "Predicción personalizada":
     st.title("Mis riesgos de salud")
     st.subheader("Introduce tus datos para predecir el riesgo de padecer de Hipertension, Diabetes y Colesterol")
-    st.caption("Recuerda: Estas predicciones son orientativas y no son diagnosticos de salud.")
+    st.warning("Recuerda: Estas predicciones son orientativas y no son diagnosticos de salud.")
 
     df = load_data()
     diabetes_m= joblib.load("datos/diabetes.joblib")
@@ -344,7 +344,7 @@ if selected == "Predicción personalizada":
     colesterol_m= joblib.load("datos/colesterol.joblib")
     preprocesado= joblib.load("datos/preprocesador_slt.joblib")
 
-# Entradas de los usuarions
+# Entradas de los usuarios
     st.markdown("---------------------------")
 
     col41, col42, col43, col44, col45= st.columns(5)
@@ -423,7 +423,7 @@ if selected == "Predicción personalizada":
         
         st.markdown("---------")
         st.subheader("Recomendaciones generales")
-        st.caption("Recomendaciones orientativas. Siempre consulta con tu médico")
+        st.warning("Recomendaciones orientativas. Siempre consulta con tu médico")
 
         st.write("Las enfermedades cronicas se pueden manejar XYZ")
         
@@ -433,7 +433,7 @@ if selected == "Predicción personalizada":
 if selected=="Acerca de esta herramienta":
 
     df= load_data()
-
+    st.image("./datos/logo-uoc-default.png", width=70) # https://www.youtube.com/watch?v=XVRWjCNoH5A
     st.title("Herramienta para la visualización y predicción de datos de salud ")
     st.markdown("""Esta visualización hace parte del Trabajo de Fin de Master **Herramienta interactiva para la visualización y predicción de la relación entre la alimentación y la salud en España a partir de datos abiertos**
                  Esta etapa del proyecto es el desarrollo de una aplicación web de visualización usando como herramienta **Streamlite**. Todo el desarrollo se llevó a cabo **en linea**.""")
@@ -451,5 +451,9 @@ if selected=="Acerca de esta herramienta":
     st.markdown("------")
     
     st.markdown("------")   
-    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G**""")
+    
     st.caption("2025")
+
+    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G**""")
+
+    
