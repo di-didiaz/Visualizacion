@@ -8,10 +8,8 @@ import plotly.express as px
 import json
 
 
-
-
 # Crear pagina
-st.set_page_config(page_title="Conoce y predice la Salud de España", page_icon="⚕️", layout="wide")
+st.set_page_config(page_title="Conoce y predice la Salud de España", page_icon="☘", layout="wide")
 
 # Subir datos- metodo tomado de app de prueba de Streamlit
 @st.cache_data
@@ -30,24 +28,108 @@ if selected == "Resultados de la encuesta":
 
     df= load_data()
     st.title("Análisis y visualización de la Encuesta de Salud de España 2023")
-    st.write("""Esta sección te permite visualizar datos de la
+    st.info("""Esta sección te permite obtener información sobre los resultados de la
              [Encuesta de Salud de España 2023](https://www.sanidad.gob.es/estadEstudios/estadisticas/encuestaSaludEspana/home.htm).""")
-    st.text("Algunas métricas relevantes:")
+      
+    encuestados=len(df)
+    col11, col12= st.columns(2)
 
-    lac_prom= df['Lacteos_frec'].mean(skipna=True)
-    hsentado_prom=df['Sedentarismo%_horas'].mean(skipna=True)
-    porc_hipert=df['Hipertension_bin'].mean(skipna=True)*100
+    with col11: 
+        st.subheader("➜ Datos Básicos")
+        st.caption("Generalidades de la encuesta")
+
+        with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
+            cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
+            with cols_mr[0].container(height=100, border=False):
     
-    # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
+                st.metric("Total personas encuestadas:", f"{encuestados}")
+            
+            with cols_mr[1]:
+                st.html(
+                '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 50px;
+                            margin: auto;
+                        }
+                    </style>
+                '''
+            )
+        with cols_mr[2].container(height=100, border=False):
+            st.metric("Rango de edades:","15 a 110")
 
-    col1,col2,col3=st.columns(3)
+        with cols_mr[3]:
+                st.html(
+                '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 50px;
+                            margin: auto;
+                        }
+                    </style>
+                '''
+            )
+        with cols_mr[4].container(height=100, border=False):
+            comun=df["Comunidad Autonoma"].nunique()
+            st.metric("Comunidades encuestadas:",f"{comun}")
+    
+   
+############    
+    with col12:
+        lac_prom= df['Lacteos_frec'].mean(skipna=True)
+        hsentado_prom=df['Sedentarismo%_horas'].mean(skipna=True)
+        porc_hipert=df['Hipertension_bin'].mean(skipna=True)*100
+        
+        # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
 
-    col1.metric(label="Consumo de carne promedio", value=f"{lac_prom:.2f}")
-    col2.metric(label="Promedio de horas sentados/dia", value=f"{hsentado_prom:.2f}")
-    col3.metric(label="Porcentaje de personas hipertensas", value=f"{porc_hipert:.2f}%")
+        st.subheader("➜ Resultados generales de salud y estilo de vida")
+        st.caption("Datos destacados")
 
-    st.markdown("---------------------------")
+        with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
+            cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
+            with cols_mr[0].container(height=100, border=False):
+    
+                st.metric(label="Porcentaje de personas hipertensas", value=f"{porc_hipert:.2f}%")
+                
 
+            with cols_mr[1]:
+                st.html(
+                '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 100px;
+                            margin: auto;
+                        }
+                    </style>
+                '''
+            )
+        with cols_mr[2].container(height=100, border=False):
+            st.metric(label="Promedio de horas sentados/dia", value=f"{hsentado_prom:.2f}")
+
+        with cols_mr[3]:
+                st.html(
+                '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 100px;
+                            margin: auto;
+                        }
+                    </style>
+                '''
+            )
+        with cols_mr[4].container(height=100, border=False):
+            st.metric(label="Consumo de lácteos promedio", value=f"{lac_prom:.2f}")
+            
+    
+    st.subheader("Navega entre las pestañas para más información:")         
  #####################################################################
  # Tabs   
   
@@ -56,8 +138,8 @@ if selected == "Resultados de la encuesta":
 ###### Tab 1 ####### 
     with tab1:
 
-        st.header("Composición fisica por comunidad autonoma")
-        st.caption(" El IMC es la medida de XYZ importante porque XYZ") 
+        st.subheader("Composición física por comunidad autonoma")
+        st.caption(" El ïndice de masa corporal (IMC) es un marcador indirecto de la grasa que puede ayudar a diagnosticar la obesidad. En el caso de los adultos, la OMS define el sobrepeso y la obesidad así: sobrepeso: IMC igual o superior a 25 y obesidad: IMC igual o superior a 30.") 
 
         df_mapa= df.groupby("Comunidad Autonoma").agg(IMC=('IMC','mean'),Peso=('Peso','mean'), Edad= ('Edad','mean'), n=('IMC','count')).round(2).reset_index()
         
@@ -72,7 +154,8 @@ if selected == "Resultados de la encuesta":
           cols_mr = st.columns([10.9, 0.2, 10.9])
           with cols_mr[0].container(height=550, border=False):
 
-            st.subheader("Mapa Interactivo") 
+            st.subheader("Mapa")
+            st.write("Pasa el cursor sobre las provincias y haz zoom para más detalles") 
             mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
                                 featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma", hover_data={"IMC": True, "Peso": True, "Edad": True}, labels={'IMC': 'Promedio IMC'},
                                 color_continuous_scale="teal")
@@ -99,8 +182,8 @@ if selected == "Resultados de la encuesta":
             st.subheader("Detalle por comunidad")
             
             comunidades= df["Comunidad Autonoma"].sort_values().unique()
-
-            comunidad_selec= st.selectbox("Selecciona una comunidad para más detalles:", options= comunidades, index=0)
+            st.write("Selecciona una comunidad para ver la distribución por sexos")
+            comunidad_selec= st.selectbox("Comunidad:", options= comunidades, index=0)
 
             ca_elegida= df[df["Comunidad Autonoma"]==comunidad_selec]
             tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
@@ -113,7 +196,7 @@ if selected == "Resultados de la encuesta":
 
 
         st.subheader("Salud percibida y cronicidad por sexo")
-        st.caption("Los encuestados podian reportar el sexo con el que se identificaban y el estado de salud como 'Muy bueno', 'Bueno','Regular','Malo'y 'Muy malo'")
+        st.info("Los encuestados reportaron el sexo con el que se identificaban y el estado de salud como 'Muy bueno', 'Bueno', 'Regular', 'Malo' y 'Muy malo'")
         salud_per=df[df['Salud_Percibida'].notna()]
         
         mb_bueno= salud_per['Salud_Percibida'].str.contains('Bueno| Muy bueno', case=False, na=False)
@@ -126,15 +209,15 @@ if selected == "Resultados de la encuesta":
         st.write("Buena salud percibida por sexos reportados")
         col21, col22= st.columns(2)
         
-        col21.metric(label=f"{sexos[0]}", value= f"{buenos.loc[sexos[0]]:.2f}%" )
-        col22.metric(f"{sexos[1]}",f"{buenos.loc[sexos[1]]:.2f}%" )
+        col21.metric(label=f"{sexos[0]}", value= f"{buenos.loc[sexos[0]]:.2f}%", border=True )
+        col22.metric(f"{sexos[1]}",f"{buenos.loc[sexos[1]]:.2f}%",border=True  )
 
         st.caption("Los encuestados respondieron si padecian de alguna enfermedad crónica")
 
         col23, col24= st.columns(2)
             
-        col23.metric(f"{sexos[0]}",f"{cont_cronicidad.loc[sexos[0]]:.2f}%" )
-        col24.metric(f"{sexos[1]}",f"{cont_cronicidad.loc[sexos[1]]:.2f}%" )
+        col23.metric(f"{sexos[0]}",f"{cont_cronicidad.loc[sexos[0]]:.2f}%", border=True )
+        col24.metric(f"{sexos[1]}",f"{cont_cronicidad.loc[sexos[1]]:.2f}%", border=True )
                                                                 
         st.markdown("----------------")
 
