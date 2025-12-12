@@ -13,7 +13,7 @@ La aplicacion permite:
   1. Visualizar análisis descriptivo del conjunto de datos abiertos de la Encuesta de Salud de España 2023.
   2. Realizar predicciones usando um modelo de entrenado y evaluado
 
-Se incluyen los archivos del dataset ya procesado y el modelo final entrenado.
+Se incluyen los archivos del dataset de entrada procesado, el dataset usado para entrenar los modelos, los modelos entrenados y el proprocesador.
 
 ### Como ejecutarla en máquina
 

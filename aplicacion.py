@@ -21,7 +21,7 @@ def load_data():
 
  #Se uso como referencia  https://www.youtube.com/watch?v=7E3yxq-P-a8
 with st.sidebar:
-    selected = option_menu(menu_title="Menú", options=["Resultados de la encuesta", "Predicción personalizada"], icons=["clipboard-pulse", "stars"], 
+    selected = option_menu(menu_title="Menú", options=["Resultados de la encuesta", "Predicción personalizada", "Acerca de esta herramienta"], icons=["clipboard-pulse", "stars"], 
                            menu_icon="body-text",default_index=0)
 ###########################################################################################################
 # Pagina de resutlados iniciales
@@ -67,32 +67,46 @@ if selected == "Resultados de la encuesta":
         with open("datos/spain-communities.geojson") as r:
             geoson_mapa= json.load(r)
         
-        col_mapa, col_tabla= st.columns([1.3,1], gap="large", vertical_alignment='center')
+       
+        with st.container(height=600, border=True): # Metodo tomado de https://discuss.streamlit.io/t/vertical-divider/62796/4
+          cols_mr = st.columns([10.9, 0.2, 10.9])
+          with cols_mr[0].container(height=550, border=False):
 
-        with col_mapa:
             st.subheader("Mapa Interactivo") 
             mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
                                 featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma", hover_data={"IMC": True, "Peso": True, "Edad": True}, labels={'IMC': 'Promedio IMC'},
-                                title="IMC medio por comunidad autonoma. Haz clic y zoom para ver detalles por comunidad", color_continuous_scale="teal")
+                                color_continuous_scale="teal")
             mapaccaa.update_geos(fitbounds="locations", visible=False)
-            mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':80})
+            mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':20})
 
-            event=st.plotly_event(mapaccaa, override_height=600, click_event= True, hover_event= False, on_click= True, select_event=False)
+            st.plotly_chart(mapaccaa, width= "content")
 
-        with col_tabla:
+
+        with cols_mr[1]:
+            st.html(
+            '''
+                <div class="divider-vertical-line"></div>
+                <style>
+                    .divider-vertical-line {
+                        border-left: 2px solid rgba(49, 51, 63, 0.2);
+                        height: 550px;
+                        margin: auto;
+                    }
+                </style>
+            '''
+        )
+        with cols_mr[2].container(height=550, border=False):
             st.subheader("Detalle por comunidad")
-            comunidad_clicada= None
-            if not event.empty:
-                comunidad_clicada=event.iloc[0].get("location")
+            
+            comunidades= df["Comunidad Autonoma"].sort_values().unique()
 
-            if comunidad_clicada:
-                ca_elegida= df[df["Comunidad Autonoma"]==comunidad_clicada]
-                tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
-                st.subheader(f"Resultados de {comunidad_clicada}")
-                st.dataframe(tabla_ca, hide_index= True) #https://www.youtube.com/watch?v=7E3yxq-P-a8
-            else:
-                st.info("Haz clic en una comunidad para ver el detalle")
+            comunidad_selec= st.selectbox("Selecciona una comunidad para más detalles:", options= comunidades, index=0)
 
+            ca_elegida= df[df["Comunidad Autonoma"]==comunidad_selec]
+            tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
+            st.subheader(f"Resultados de {comunidad_selec}")
+            st.dataframe(tabla_ca, hide_index= True) #https://www.youtube.com/watch?v=7E3yxq-P-a8
+           
         
  ###### Tab 2 #######       
     with tab2:
@@ -154,6 +168,7 @@ if selected == "Resultados de la encuesta":
         lacteos_prom= df['Lacteos_frec'].mean()
         verduras_prom= df['Verduras_frec'].mean()
         st.markdown("----------")
+
         col31, col32, col33, col34, col35= st.columns(5)
 
         col31.metric(label="Carne", value=f"{lac_prom:.2f}")
@@ -165,32 +180,70 @@ if selected == "Resultados de la encuesta":
         st.caption("Promedio de veces a la semana")
 
         st.markdown("----------")
+        with st.container(height=450, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
+            cols_mr = st.columns([10.9, 0.2, 10.9])
+            with cols_mr[0].container(height=400, border=False):
+             lista_frec= ["Carne", "Refrescos", "Embutidos", "Lacteos", "Verduras"]
+             frec_lista= {"Carne":"Carne_frec","Refrescos":"Refrescos_frec","Embutidos":"Embutidos_frec", "Lacteos":"Lacteos_frec", "Verduras":"Verduras_frec"}
 
-        lista_frec= ["Carne", "Refrescos", "Embutidos", "Lacteos", "Verduras"]
-        frec_lista= {"Carne":"Carne_frec","Refrescos":"Refrescos_frec","Embutidos":"Embutidos_frec", "Lacteos":"Lacteos_frec", "Verduras":"Verduras_frec"}
+             opcion= st.selectbox("Selecciona un alimento", lista_frec)
+             col_df= frec_lista[opcion]
+             lista_colores={"Carne": "#ECDAB2","Refrescos": "#DDBFB3","Embutidos": "#9999C9","Lacteos": "#D8D8EA","Verduras": "#000078"}
+             colores=lista_colores[opcion]
+             frec_hst= alt.Chart(df).mark_bar(color=colores, binSpacing=0.5).encode(alt.X(col_df,bin=alt.Bin(maxbins=5), title= "Frecuencia de consumo semanal de "), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
+             st.altair_chart(frec_hst,width='content')
 
-        opcion= st.selectbox("Selecciona un alimento", lista_frec)
-        col_df= frec_lista[opcion]
-        lista_colores={"Carne": "#ECDAB2","Refrescos": "#DDBFB3","Embutidos": "#9999C9","Lacteos": "#D8D8EA","Verduras": "#000078"}
-        colores=lista_colores[opcion]
-        frec_hst= alt.Chart(df).mark_bar(color=colores, binSpacing=0.5).encode(alt.X(col_df,bin=alt.Bin(maxbins=5), title= "Frecuencia de consumo semanal de "), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
-        st.altair_chart(frec_hst,width='content')
+            with cols_mr[1]:
+                    st.html(
+                        '''
+                            <div class="divider-vertical-line"></div>
+                            <style>
+                                .divider-vertical-line {
+                                    border-left: 2px solid rgba(49, 51, 63, 0.2);
+                                    height: 350px;
+                                    margin: auto;
+                                }
+                            </style>
+                        '''
+                    )
+            with cols_mr[2].container(height=400, border=False):
+        
+               st.write("Algunas aclaraciones sobre el consumo de alimentos")
+       
+        st.markdown("----------")                                                          
+        with st.container(height=650, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
+            cols_mr = st.columns([10.9, 0.2, 10.9])
+            with cols_mr[0].container(height=650, border=False):  
+                st.write("Otro determinante de salud es....")
 
-        st.markdown("----------")
+            with cols_mr[1]:
+                    st.html(
+                        '''
+                            <div class="divider-vertical-line"></div>
+                            <style>
+                                .divider-vertical-line {
+                                    border-left: 2px solid rgba(49, 51, 63, 0.2);
+                                    height: 550px;
+                                    margin: auto;
+                                }
+                            </style>
+                        '''
+                    )
+            with cols_mr[2].container(height=600, border=False):
 
-        st.subheader("Horas sentados al día")
-        # Ver https://www.youtube.com/watch?v=rxWkIn1EZnM
-        # https://altair-viz.github.io/gallery/radial_chart.html
-        colores_sed=["#73EDFF","#A9B3E0","#6679D8","#4D63D1", "#1724A0", "#030342"]
-        df["rangos"]= pd.cut(df["Sedentarismo%_horas"], bins=[0,2,4,6,8,12,24], labels=["0-2 horas","2 a 4 horas","4-6 horas","6 a 8 horas","8 a 12 horas","Mas de 12 hoaas"],include_lowest=True)
-        sedentarismo= df["rangos"].value_counts().reset_index()
-        sedentarismo.columns= ["Rangos", "Personas"] 
 
-        sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de horas/dia").interactive()
-        etiqueta=(alt.Chart(sedentarismo).mark_text(radius=160, size=12, color= "ghostwhite").encode(theta=alt.Theta("Personas", stack=True),text="Rangos"))
-        st.altair_chart(sedentarismo_pie+ etiqueta,width='content')                                                            
+                st.subheader("Horas sentados al día")
+                # Ver https://www.youtube.com/watch?v=rxWkIn1EZnM
+                # https://altair-viz.github.io/gallery/radial_chart.html
+                colores_sed=["#73EDFF","#A9B3E0","#6679D8","#4D63D1", "#1724A0", "#030342"]
+                df["rangos"]= pd.cut(df["Sedentarismo%_horas"], bins=[0,2,4,6,8,12,24], labels=["0-2 horas","2 a 4 horas","4-6 horas","6 a 8 horas","8 a 12 horas","Mas de 12 hoaas"],include_lowest=True)
+                sedentarismo= df["rangos"].value_counts().reset_index()
+                sedentarismo.columns= ["Rangos", "Personas"] 
 
-                                                                    
+                sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de horas/dia").interactive()
+                etiqueta=(alt.Chart(sedentarismo).mark_text(radius=160, size=12, color= "ghostwhite").encode(theta=alt.Theta("Personas", stack=True),text="Rangos"))
+                st.altair_chart(sedentarismo_pie+ etiqueta,width='content')                                                            
+
         
 
 ###########################################################################################################
@@ -291,4 +344,29 @@ if selected == "Predicción personalizada":
 
         st.write("Las enfermedades cronicas se pueden manejar XYZ")
         
+##################################
 
+
+if selected=="Acerca de esta herramienta":
+
+    df= load_data()
+
+    st.title("Herramienta para la visualización y predicción de datos de salud ")
+    st.markdown("""Esta visualización hace parte del Trabajo de Fin de Master **Herramienta interactiva para la visualización y predicción de la relación entre la alimentación y la salud en España a partir de datos abiertos**
+                 Esta etapa del proyecto es el desarrollo de una aplicación web de visualización usando como herramienta **Streamlite**. Todo el desarrollo se llevó a cabo **en linea**.""")
+    st.info("""El repositorio que contiene los modelos, el preprocesador y los cuadernos de limpieza, exploración, estadística y modelado estan en **https://github.com/di-didiaz/Visualizacion**""")
+    st.subheader("La aplicacion permite:")
+    st.markdown("""
+                1. Visualizar análisis descriptivo del conjunto de datos abiertos de la Encuesta de Salud de España 2023.
+                2. Realizar predicciones usando um modelo de entrenado y evaluado""")
+    st.markdown("""El conjunto de datos final usado para los resultados de la encuesta tiene la estructura a continuacion:""")
+
+    st.dataframe(df.head(10), hide_index= True)
+
+    st.markdown("""La estructura del conjunto de datos final usado para el modelado se puede previsualizar a continuación""")
+    # pd.DataFrame(df.head(10))
+    st.markdown("------")
+    
+    st.markdown("------")   
+    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G**""")
+    st.caption("2025")
