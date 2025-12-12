@@ -89,7 +89,7 @@ if selected == "Resultados de la encuesta":
         # Se usa como referencia https://www.corecode.school/en/blog/python-streamlit
 
         st.subheader("➜ Resultados generales de salud y estilo de vida")
-        ##st.caption("Datos destacados")
+        st.caption("Datos destacados")
 
         with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
             cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
