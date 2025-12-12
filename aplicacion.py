@@ -133,7 +133,7 @@ if selected == "Resultados de la encuesta":
             st.metric(label="Consumo de lácteos promedio", value=f"{lac_prom:.2f}")
             
     
-    st.subheader("Navega entre las pestañas para más información:")         
+    st.info("Navega entre las pestañas para más información")         
  #####################################################################
  # Tabs   
   
@@ -143,8 +143,7 @@ if selected == "Resultados de la encuesta":
     with tab1:
 
         st.subheader("Composición física por comunidad autonoma")
-        #st.caption("El ïndice de masa corporal (IMC) es un marcador indirecto de la grasa que puede ayudar a diagnosticar la obesidad. En el caso de los adultos, la OMS https://www.who.int/es/news-room/fact-sheets/detail/obesity-and-overweight define el sobrepeso y la obesidad así: sobrepeso: IMC igual o superior a 25 y obesidad: IMC igual o superior a 30.") 
-
+        st.caption("El indice de masa corporal o IMC es un marcador indirecto de la grasa que puede ayudar a diagnosticar la obesidad. En el caso de los adultos, la OMS define el sobrepeso y la obesidad así: sobrepeso: IMC igual o superior a 25 y obesidad: IMC igual o superior a 30.")
         df_mapa= df.groupby("Comunidad Autonoma").agg(IMC=('IMC','mean'),Peso=('Peso','mean'), Edad= ('Edad','mean'), n=('IMC','count')).round(2).reset_index()
         
         df_prop = (df.groupby(["Comunidad Autonoma", "Salud_Percibida"]).size().reset_index(name="count"))
@@ -246,9 +245,9 @@ if selected == "Resultados de la encuesta":
      
     with tab3:
         st.header("Determinantes de salud: Dieta y actividad física")
-        #st.caption("Los determinantes de salud son XYZ")
+        st.write("Los determinantes de salud son XYZ")
 
-        st.subheader("Frecuencia de alimentación")
+        st.subheader("Frecuencia de consumo de alimentos | Veces por semana")
         
 
         carne_prom= df['Carne_frec'].mean()
@@ -261,12 +260,10 @@ if selected == "Resultados de la encuesta":
         col31, col32, col33, col34, col35= st.columns(5)
 
         col31.metric(label="Carne", value=f"{lac_prom:.2f}")
-        col32.metric(label="Refrescos", value= f"{refrescos_prom:.2f}")
-        col33.metric(label= "Embutidos",value=f"{embutidos_prom:.2f}")
-        col34.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
-        col35.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
-
-        st.text("Promedio de veces a la semana")
+        col35.metric(label="Refrescos", value= f"{refrescos_prom:.2f}")
+        col34.metric(label= "Embutidos",value=f"{embutidos_prom:.2f}")
+        col32.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
+        col33.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
 
         st.markdown("----------")
         with st.container(height=450, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
@@ -461,6 +458,6 @@ if selected=="Acerca de esta herramienta":
     st.markdown("------")   
     
 
-    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G**""")
+    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G | 2025**""")
 
     
