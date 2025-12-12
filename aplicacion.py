@@ -36,7 +36,7 @@ if selected == "Resultados de la encuesta":
 
     with col11: 
         st.subheader("➜ Datos Básicos")
-        ##st.caption("Generalidades de la encuesta")
+        st.caption('Generalidades de la encuesta')
 
         with st.container(height=100, border=True): #https://discuss.streamlit.io/t/vertical-divider/62796/4
             cols_mr = st.columns([3.9, 0.2, 3.9,0.2, 3.9])
@@ -45,8 +45,8 @@ if selected == "Resultados de la encuesta":
                 st.metric("Total personas encuestadas:", f"{encuestados}")
             
             with cols_mr[1]:
-                st.html(
-                '''
+                st.markdown(
+                    '''
                     <div class="divider-vertical-line"></div>
                     <style>
                         .divider-vertical-line {
@@ -55,14 +55,15 @@ if selected == "Resultados de la encuesta":
                             margin: auto;
                         }
                     </style>
-                '''
-            )
+                    ''',
+                    unsafe_allow_html=True
+                            )
         with cols_mr[2].container(height=100, border=False):
             st.metric("Rango de edades:","15 a 110")
 
         with cols_mr[3]:
-                st.html(
-                '''
+                st.markdown(
+                    '''
                     <div class="divider-vertical-line"></div>
                     <style>
                         .divider-vertical-line {
@@ -71,8 +72,9 @@ if selected == "Resultados de la encuesta":
                             margin: auto;
                         }
                     </style>
-                '''
-            )
+                    ''',
+                    unsafe_allow_html=True
+                            )
         with cols_mr[4].container(height=100, border=False):
             comun=df["Comunidad Autonoma"].nunique()
             st.metric("Comunidades encuestadas:",f"{comun}")
@@ -97,34 +99,36 @@ if selected == "Resultados de la encuesta":
                 
 
             with cols_mr[1]:
-                st.html(
-                '''
+                st.markdown(
+                    '''
                     <div class="divider-vertical-line"></div>
                     <style>
                         .divider-vertical-line {
                             border-left: 2px solid rgba(49, 51, 63, 0.2);
-                            height: 100px;
+                            height: 50px;
                             margin: auto;
                         }
                     </style>
-                '''
-            )
+                    ''',
+                    unsafe_allow_html=True
+                            )
         with cols_mr[2].container(height=100, border=False):
             st.metric(label="Promedio de horas sentados/dia", value=f"{hsentado_prom:.2f}")
 
         with cols_mr[3]:
-                st.html(
-                '''
+                st.markdown(
+                    '''
                     <div class="divider-vertical-line"></div>
                     <style>
                         .divider-vertical-line {
                             border-left: 2px solid rgba(49, 51, 63, 0.2);
-                            height: 100px;
+                            height: 50px;
                             margin: auto;
                         }
                     </style>
-                '''
-            )
+                    ''',
+                    unsafe_allow_html=True
+                            )
         with cols_mr[4].container(height=100, border=False):
             st.metric(label="Consumo de lácteos promedio", value=f"{lac_prom:.2f}")
             
@@ -166,18 +170,19 @@ if selected == "Resultados de la encuesta":
 
 
         with cols_mr[1]:
-            st.html(
-            '''
-                <div class="divider-vertical-line"></div>
-                <style>
-                    .divider-vertical-line {
-                        border-left: 2px solid rgba(49, 51, 63, 0.2);
-                        height: 550px;
-                        margin: auto;
-                    }
-                </style>
-            '''
-        )
+            st.markdown(
+                    '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 50px;
+                            margin: auto;
+                        }
+                    </style>
+                    ''',
+                    unsafe_allow_html=True
+                            )
         with cols_mr[2].container(height=550, border=False):
             st.subheader("Detalle por comunidad")
             
@@ -189,6 +194,7 @@ if selected == "Resultados de la encuesta":
             tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
             st.subheader(f"Resultados de {comunidad_selec}")
             st.dataframe(tabla_ca, hide_index= True) #https://www.youtube.com/watch?v=7E3yxq-P-a8
+
            
         
  ###### Tab 2 #######       
@@ -209,8 +215,8 @@ if selected == "Resultados de la encuesta":
         st.markdown("""**Buena salud**: Percepcion de salud por sexos""")
         col21, col22= st.columns(2)
         
-        col21.metric(label=f"♀ Hombres con buena salud", value= f"{buenos.loc[sexos[0]]:.2f}%", border=True )
-        col22.metric(f"♀ Mujeres con buena salud",f"{buenos.loc[sexos[1]]:.2f}%",border=True  )
+        col21.metric(f"♀ Hombres con buena salud", f"{buenos.loc[sexos[0]]:.2f}%", border=True)
+        col22.metric(f"♀ Mujeres con buena salud",f"{buenos.loc[sexos[1]]:.2f}%", border=True )
 
         st.markdown("""**Enfermedades cronicas**:Padecimiento de enfermedades cronicas por sexo""")
         
@@ -277,18 +283,19 @@ if selected == "Resultados de la encuesta":
              st.altair_chart(frec_hst,width='content')
 
             with cols_mr[1]:
-                    st.html(
-                        '''
-                            <div class="divider-vertical-line"></div>
-                            <style>
-                                .divider-vertical-line {
-                                    border-left: 2px solid rgba(49, 51, 63, 0.2);
-                                    height: 350px;
-                                    margin: auto;
-                                }
-                            </style>
-                        '''
-                    )
+                    st.markdown(
+                    '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 50px;
+                            margin: auto;
+                        }
+                    </style>
+                    ''',
+                    unsafe_allow_html=True
+                            )
             with cols_mr[2].container(height=400, border=False):
         
                st.write("Algunas aclaraciones sobre el consumo de alimentos")
@@ -300,18 +307,19 @@ if selected == "Resultados de la encuesta":
                 st.write("Otro determinante de salud es....")
 
             with cols_mr[1]:
-                    st.html(
-                        '''
-                            <div class="divider-vertical-line"></div>
-                            <style>
-                                .divider-vertical-line {
-                                    border-left: 2px solid rgba(49, 51, 63, 0.2);
-                                    height: 550px;
-                                    margin: auto;
-                                }
-                            </style>
-                        '''
-                    )
+                    st.markdown(
+                    '''
+                    <div class="divider-vertical-line"></div>
+                    <style>
+                        .divider-vertical-line {
+                            border-left: 2px solid rgba(49, 51, 63, 0.2);
+                            height: 50px;
+                            margin: auto;
+                        }
+                    </style>
+                    ''',
+                    unsafe_allow_html=True
+                            )
             with cols_mr[2].container(height=600, border=False):
 
 
@@ -452,7 +460,6 @@ if selected=="Acerca de esta herramienta":
     
     st.markdown("------")   
     
-    st.caption("2025")
 
     st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G**""")
 
