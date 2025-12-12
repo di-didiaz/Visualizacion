@@ -133,7 +133,7 @@ if selected == "Resultados de la encuesta":
             st.metric(label="Consumo de lácteos promedio", value=f"{lac_prom:.2f}")
             
     
-    st.info("Navega entre las pestañas para más información")         
+    st.success("Navega entre las pestañas para más información")         
  #####################################################################
  # Tabs   
   
@@ -258,11 +258,11 @@ if selected == "Resultados de la encuesta":
        
         col31, col32, col33, col34, col35= st.columns(5)
 
-        col31.metric(label="Carne", value=f"{lac_prom:.2f}")
+        col33.metric(label="Carne", value=f"{carne_prom:.2f}")
         col35.metric(label="Refrescos", value= f"{refrescos_prom:.2f}")
         col34.metric(label= "Embutidos",value=f"{embutidos_prom:.2f}")
-        col32.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
-        col33.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
+        col31.metric(label= "Lacteos", value= f"{lacteos_prom:.2f}")
+        col32.metric(label= "Verduras", value= f"{verduras_prom:.2f}")
 
         st.markdown("----------")
         with st.container(height=450, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
