@@ -17,6 +17,9 @@ def load_data():
     df = pd.read_csv("datos/df_final.csv", encoding= "latin-1")
     return df
 
+def load_streamlit():
+    df = pd.read_csv("datos/df_streamlite.csv", encoding= "latin-1")
+    return df
  #Se uso como referencia  https://www.youtube.com/watch?v=7E3yxq-P-a8
 with st.sidebar:
     selected = option_menu(menu_title="Menú", options=["Resultados de la encuesta", "Predicción personalizada", "Acerca de esta herramienta"], icons=["clipboard-pulse", "stars"], 
@@ -455,12 +458,14 @@ if selected=="Acerca de esta herramienta":
     st.dataframe(df.head(10), hide_index= True)
 
     st.markdown("""La estructura del conjunto de datos final usado para el modelado se puede previsualizar a continuación""")
-    # pd.DataFrame(df.head(10))
+    df_streamlit= load_streamlit()
+    st.dataframe(df_streamlit.head(10),hide_index= True)
+
     st.markdown("------")
-    
+    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G | 2025**""")
     st.markdown("------")   
     
 
-    st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G | 2025**""")
+   
 
     
