@@ -245,9 +245,9 @@ if selected == "Resultados de la encuesta":
      
     with tab3:
         st.header("Determinantes de salud: Dieta y actividad física")
-        st.write("Los determinantes de salud son XYZ")
+        st.write("Son los factores personales, sociales, económicos y ambientales que determinan nuestro estado de salud")
 
-        st.subheader("Frecuencia de consumo de alimentos | Veces por semana")
+        st.subheader("Frecuencia semanal de consumo de alimentos | Veces ")
         
 
         carne_prom= df['Carne_frec'].mean()
@@ -255,8 +255,7 @@ if selected == "Resultados de la encuesta":
         embutidos_prom= df['Embutidos_frec'].mean()
         lacteos_prom= df['Lacteos_frec'].mean()
         verduras_prom= df['Verduras_frec'].mean()
-        st.markdown("----------")
-
+       
         col31, col32, col33, col34, col35= st.columns(5)
 
         col31.metric(label="Carne", value=f"{lac_prom:.2f}")
@@ -276,7 +275,7 @@ if selected == "Resultados de la encuesta":
              col_df= frec_lista[opcion]
              lista_colores={"Carne": "#ECDAB2","Refrescos": "#DDBFB3","Embutidos": "#9999C9","Lacteos": "#D8D8EA","Verduras": "#000078"}
              colores=lista_colores[opcion]
-             frec_hst= alt.Chart(df).mark_bar(color=colores, binSpacing=0.5).encode(alt.X(col_df,bin=alt.Bin(maxbins=5), title= "Frecuencia de consumo semanal de "), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
+             frec_hst= alt.Chart(df).mark_bar(color=colores, binSpacing=0.5).encode(alt.X(col_df,bin=alt.Bin(maxbins=4), title= "Frecuencia de consumo semanal"), alt.Y("count()", title= "Encuestados")).properties(width=600, height=400, title= "Consumo de "+opcion).interactive()
              st.altair_chart(frec_hst,width='content')
 
             with cols_mr[1]:
@@ -286,7 +285,7 @@ if selected == "Resultados de la encuesta":
                     <style>
                         .divider-vertical-line {
                             border-left: 2px solid rgba(49, 51, 63, 0.2);
-                            height: 50px;
+                            height: 400px;
                             margin: auto;
                         }
                     </style>
@@ -295,7 +294,11 @@ if selected == "Resultados de la encuesta":
                             )
             with cols_mr[2].container(height=400, border=False):
         
-               st.write("Algunas aclaraciones sobre el consumo de alimentos")
+               st.subheader("Alimención saludable según la Organización Mundial de la Salud:")
+               st.write("Segun la [OMS](https://www.who.int/es/news-room/fact-sheets/detail/healthy-diet), una dieta sana incluye lo siguiente:")
+               st.write("1. Frutas, verduras, legumbres (tales como lentejas y alubias), frutos secos y cereales integrales (por ejemplo, maíz, mijo, avena, trigo o arroz moreno no procesados).")
+               st.write("2. Al menos 400 g (o sea, cinco porciones) de frutas y hortalizas al día, excepto papas, batatas, mandioca y otros tubérculos feculentos.")
+               st.write("3. Menos del 10% de la ingesta calórica total de azúcares libres, que equivale a 50 gramos (o unas 12 cucharaditas rasas) en el caso de una persona con un peso corporal saludable que consuma aproximadamente 2000 calorías al día, aunque para obtener beneficios de salud adicionales lo ideal sería un consumo inferior al 5% de la ingesta calórica total  Menos del 30% de la ingesta calórica diaria procedente de grasas, en especial las presentes en pescados, aguacates, frutos secos y en los aceites de girasol, soja, canola y oliva en lugar de las grasas en la carne grasa y los productos lácteos de rumiantes tales como vacas, ovejas, cabras y camellos, la mantequilla, el aceite de palma y de coco, la nata, el queso, la mantequilla clarificada y la manteca de cerdo, pizzas congeladas, tartas, galletas, pasteles, obleas, aceites de cocina y pastas untables.")
        
         st.markdown("----------")                                                          
         with st.container(height=650, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
@@ -310,7 +313,7 @@ if selected == "Resultados de la encuesta":
                     <style>
                         .divider-vertical-line {
                             border-left: 2px solid rgba(49, 51, 63, 0.2);
-                            height: 50px;
+                            height: 400px;
                             margin: auto;
                         }
                     </style>
@@ -340,7 +343,7 @@ if selected == "Resultados de la encuesta":
 
 if selected == "Predicción personalizada":
     st.title("Mis riesgos de salud")
-    st.subheader("Introduce tus datos para predecir el riesgo de padecer de Hipertension, Diabetes y Colesterol")
+    st.subheader("Introduce tus datos para predecir el riesgo de padecer de Hipertensión, Diabetes y Colesterol")
     st.warning("Recuerda: Estas predicciones son orientativas y no son diagnosticos de salud.")
 
     df = load_data()
@@ -350,8 +353,6 @@ if selected == "Predicción personalizada":
     preprocesado= joblib.load("datos/preprocesador_slt.joblib")
 
 # Entradas de los usuarios
-    st.markdown("---------------------------")
-
     col41, col42, col43, col44, col45= st.columns(5)
 
     Edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
@@ -426,11 +427,7 @@ if selected == "Predicción personalizada":
             st.info(f"{conteo_cigual:.2f}% de la muestra obtuvieron el mismo resultado")
 
         
-        st.markdown("---------")
-        st.subheader("Recomendaciones generales")
-        st.warning("Recomendaciones orientativas. Siempre consulta con tu médico")
-
-        st.write("Las enfermedades cronicas se pueden manejar XYZ")
+        st.warning("Los riesgos son orientativos. Siempre consulta con tu médico")
         
 ##################################
 
