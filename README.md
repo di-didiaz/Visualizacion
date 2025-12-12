@@ -6,7 +6,7 @@
 
 Esta visualización hace parte del Trabajo de Fin de Master **"Herramienta interactiva para la visualización y predicción de la relación entre la alimentación y la salud en España a partir de datos abiertos"**.
 
-Esta etapa del proyecto es el desarrollo de una aplicación web de vizualización usando como herramienta **Streamlite**. Todo el desarrollo se realiza **en linea**.
+Esta etapa del proyecto es el desarrollo de una aplicación web de visualización usando como herramienta **Streamlite**. Todo el desarrollo se realiza **en linea**.
 
 La aplicacion permite:
 

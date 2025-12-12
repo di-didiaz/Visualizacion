@@ -72,24 +72,26 @@ if selected == "Resultados de la encuesta":
         with col_mapa:
             st.subheader("Mapa Interactivo") 
             mapaccaa= px.choropleth(df_mapa, geojson= geoson_mapa, locations="Comunidad Autonoma",
-                                featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma", hover_data={'IMC', 'Peso', 'Edad'}, labels={'IMC': 'Promedio IMC'},
-                                title="IMC medio por comunidad autonoma. Haz click y zoom para ver detalles por comunidad", color_continuous_scale="teal")
+                                featureidkey="properties.name", color="IMC",hover_name="Comunidad Autonoma", hover_data={"IMC": True, "Peso": True, "Edad": True}, labels={'IMC': 'Promedio IMC'},
+                                title="IMC medio por comunidad autonoma. Haz clic y zoom para ver detalles por comunidad", color_continuous_scale="teal")
             mapaccaa.update_geos(fitbounds="locations", visible=False)
             mapaccaa.update_layout(margin={'r':0,'l':0, 'b':0,'t':80})
 
-            event=st.plotly_chart(mapaccaa,width='content', on_click= True)
+            event=st.plotly_event(mapaccaa, override_height=600, click_event= True, hover_event= False, on_click= True, select_event=False)
 
         with col_tabla:
             st.subheader("Detalle por comunidad")
             comunidad_clicada= None
-            if event and "points" in event and len(event["points"])>0:
-                comunidad_clicada=event["points"][0].get("location")
+            if not event.empty:
+                comunidad_clicada=event.iloc[0].get("location")
+
             if comunidad_clicada:
                 ca_elegida= df[df["Comunidad Autonoma"]==comunidad_clicada]
                 tabla_ca=ca_elegida.groupby('Sexo').agg(Encuestados=('Sexo','count'), Peso= ('Peso', 'mean'),Altura=('Altura','mean') , IMC= ('IMC','mean')).round(2).reset_index()
                 st.subheader(f"Resultados de {comunidad_clicada}")
                 st.dataframe(tabla_ca, hide_index= True) #https://www.youtube.com/watch?v=7E3yxq-P-a8
-        
+            else:
+                st.info("Haz clic en una comunidad para ver el detalle")
 
         
  ###### Tab 2 #######       
@@ -100,7 +102,7 @@ if selected == "Resultados de la encuesta":
         st.caption("Los encuestados podian reportar el sexo con el que se identificaban y el estado de salud como 'Muy bueno', 'Bueno','Regular','Malo'y 'Muy malo'")
         salud_per=df[df['Salud_Percibida'].notna()]
         
-        mb_bueno= salud_per['Salud_Percibida'].str.contains('Bueno', case=False, na=False)
+        mb_bueno= salud_per['Salud_Percibida'].str.contains('Bueno| Muy bueno', case=False, na=False)
         buenos= salud_per.groupby('Sexo').apply(lambda x:mb_bueno.loc[x.index].mean()*100)
        
         cronicidad=df[df['Cronicidad_bin'].notna()]

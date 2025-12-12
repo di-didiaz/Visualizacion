@@ -1,8 +1,7 @@
-streamlit
+streamlit>=1.35
 streamlit-option-menu
-plotly>=4.0.0
+plotly
 streamlit[charts]
-streamlit-plotly-events
 pandas
 numpy
 scikit-learn==1.6.1
