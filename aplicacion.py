@@ -304,7 +304,13 @@ if selected == "Resultados de la encuesta":
         with st.container(height=650, border=True): # Metodo de https://discuss.streamlit.io/t/vertical-divider/62796/4
             cols_mr = st.columns([10.9, 0.2, 10.9])
             with cols_mr[0].container(height=650, border=False):  
-                st.write("Otro determinante de salud es....")
+                st.subheader("Actividad física según la OMS")
+                st.write("Segun la [OMS](https://www.who.int/es/news/item/25-11-2020-every-move-counts-towards-better-health-says-who), se recomienda:")
+                st.write("1. Por lo menos de 150 a 300 minutos de actividad física aeróbica de intensidad moderada o vigorosa por semana para todos los adultos, incluidas las personas que viven con afecciones crónicas o discapacidad.")
+                st.write("2. Se aconseja a los adultos de edad avanzada (65 años o más) que añadan actividades destinadas a reforzar el equilibrio y la coordinación, así como el fortalecimiento de los músculos, para ayudar a prevenir las caídas y mejorar la salud.")
+                st.write("3. Toda actividad física es beneficiosa y puede realizarse como parte del trabajo, el deporte y el ocio o el transporte (caminar, patinar y montar en bicicleta), pero también del baile, el juego y las tareas domésticas cotidianas, como la jardinería y la limpieza.")
+                st.info("La actividad física regular es fundamental para prevenir y ayudar a manejar las cardiopatías, la diabetes de tipo 2 y el cáncer, así como para reducir los síntomas de la depresión y la ansiedad, disminuir el deterioro cognitivo, mejorar la memoria y potenciar la salud cerebral.")
+
 
             with cols_mr[1]:
                     st.markdown(
@@ -323,7 +329,7 @@ if selected == "Resultados de la encuesta":
             with cols_mr[2].container(height=600, border=False):
 
 
-                st.subheader("Horas sentados al día")
+                st.subheader("Sedentarismo")
                 # Ver https://www.youtube.com/watch?v=rxWkIn1EZnM
                 # https://altair-viz.github.io/gallery/radial_chart.html
                 colores_sed=["#73EDFF","#A9B3E0","#6679D8","#4D63D1", "#1724A0", "#030342"]
@@ -331,7 +337,7 @@ if selected == "Resultados de la encuesta":
                 sedentarismo= df["rangos"].value_counts().reset_index()
                 sedentarismo.columns= ["Rangos", "Personas"] 
 
-                sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Porcentaje de horas/dia").interactive()
+                sedentarismo_pie= alt.Chart(sedentarismo).mark_arc().encode(theta= alt.Theta("Personas", stack= True), color= alt.Color("Rangos:N", scale=alt.Scale(range=colores_sed)), tooltip=["Rangos","Personas"]).properties(width=600, height=600, title= "Horas sentadas por dia").interactive()
                 etiqueta=(alt.Chart(sedentarismo).mark_text(radius=160, size=12, color= "ghostwhite").encode(theta=alt.Theta("Personas", stack=True),text="Rangos"))
                 st.altair_chart(sedentarismo_pie+ etiqueta,width='content')                                                            
 
