@@ -62,7 +62,7 @@ if selected == "Resultados de la encuesta":
                     unsafe_allow_html=True
                             )
         with cols_mr[2].container(height=100, border=False):
-            st.metric("Rango de edades:","15 a 110")
+            st.metric("Rango de edades:","15 a 103")
 
         with cols_mr[3]:
                 st.markdown(
@@ -364,7 +364,7 @@ if selected == "Predicción personalizada":
 # Entradas de los usuarios
     col41, col42, col43, col44, col45= st.columns(5)
 
-    Edad= st.slider("Selecciona tu edad", 15, 100, 35, help="Desliza el punto hasta llegar a tu edad")
+    Edad= st.slider("Selecciona tu edad", 15, 103, 35, help="Desliza el punto hasta llegar a tu edad")
     Altura= st.slider("Introduce tu altura estimada en centímetros", 100, 210, 170,help="Desliza el punto hasta llegar a tu altura")  
     Peso= st.number_input("Introduce tu peso estimado en kilos", 32, 200, 70, help="Usa un estimado o tu última medición")
     IMC= Peso/((Altura/100)**2)
@@ -372,7 +372,7 @@ if selected == "Predicción personalizada":
                                                    "Enseñanzas profesionales de grado superior o equivalentes", "Estudios universitarios o equivalentes"], help="Incluye el utimo grado que hayas completado")
     Sedentarismo_horas=st.number_input("Horas que pasas sentada en un dia",min_value=0, max_value=24, value=4, help="Horas del dia que normalmente pasas sentada")
     Refrescos_frec= st.selectbox("Numero de refrescos que bebes normalmente en una la semana. Si bebes más de 10, elije 10",[0,0.5, 1.5, 3,5,7,10], index=3, help="Las medidas intermedias indican la mitad de un refresco")
-
+    st.info("Tus datos no son almacenados.")
    
     if st.button("Predecir ahora!"):
         df_entrada= pd.DataFrame([{"Edad": Edad, "IMC": IMC,"Refrescos_frec": Refrescos_frec,  "Sedentarismo%_horas": Sedentarismo_horas, "Peso": Peso, "Altura": Altura,"Estudios": Estudios}])
@@ -455,11 +455,11 @@ if selected=="Acerca de esta herramienta":
                 2. Realizar predicciones usando um modelo de entrenado y evaluado""")
     st.markdown("""El conjunto de datos final usado para los resultados de la encuesta tiene la estructura a continuacion:""")
 
-    st.dataframe(df.head(10), hide_index= True)
+    st.dataframe(df.head(4), hide_index= True)
 
     st.markdown("""La estructura del conjunto de datos final usado para el modelado se puede previsualizar a continuación""")
     df_streamlit= load_streamlit()
-    st.dataframe(df_streamlit.head(10),hide_index= True)
+    st.dataframe(df_streamlit.head(4),hide_index= True)
 
     st.markdown("------")
     st.markdown("""**Máster en Ciencia de datos | Universidad Oberta de Catalunya | Diana Díaz G | 2025**""")
